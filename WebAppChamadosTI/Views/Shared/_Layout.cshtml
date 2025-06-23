@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Chamados T.I</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+            overflow-x: hidden;
+            background-color: #BBDEF0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #6D9DBD;
+            background: linear-gradient(266deg, rgba(109, 157, 189, 1) 67%, rgba(109, 157, 189, 1) 67%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+            .nav-buttons a {
+                text-decoration: none;
+                padding: 10px 20px;
+                background-color: white;
+                color: #007bff;
+                border: 2px solid #007bff;
+                border-radius: 5px;
+                font-weight: bold;
+                transition: 0.3s ease;
+            }
+
+                .nav-buttons a:hover {
+                    background-color: #007bff;
+                    color: white;
+                }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #6D9DBD;
+            background: linear-gradient(266deg, rgba(109, 157, 189, 1) 67%, rgba(109, 157, 189, 1) 67%);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        @@media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+                .nav-buttons a {
+                    width: 200px;
+                    text-align: center;
+                }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1>WebChamados TI</h1>
+    </header>
+
+    <div class="container">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        &copy; 2025 - Chamados T.I - Todos os direitos reservados.
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

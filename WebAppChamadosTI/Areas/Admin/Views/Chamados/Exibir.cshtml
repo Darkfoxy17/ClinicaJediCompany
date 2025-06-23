@@ -1,0 +1,39 @@
+﻿@model WebAppChamadosTI.Models.Chamado
+
+@{
+    ViewData["Title"] = "Exibir Chamado";
+}
+
+<h1>Exibir Chamado</h1>
+
+<div>
+    <h4>Detalhes</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.DataSolicitacao)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.DataSolicitacao)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Problema)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.Problema)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Ocorrencia)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.Ocorrencia)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.ValorTotal)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.ValorTotal)</dd>
+
+        <dt class="col-sm-2">Cliente</dt>
+        <dd class="col-sm-10">@(Model.Cliente?.Nome ?? "Não atribuído")</dd>
+
+        <dt class="col-sm-2">Técnico</dt>
+        <dd class="col-sm-10">@(Model.Tecnico?.Nome ?? "Não atribuído")</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Concluido)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.Concluido)</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Alterar</a>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

@@ -1,0 +1,67 @@
+﻿@model WebAppChamadosTI.Models.Tecnico
+
+@{
+    ViewData["Title"] = "Alterar";
+}
+
+<h1>Alterar</h1>
+
+<h4>Técnico</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Alterar" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Especialidade" class="control-label"></label>
+                <input asp-for="Especialidade" class="form-control" />
+                <span asp-validation-for="Especialidade" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Usuario" class="control-label">Usuário</label>
+                <select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.Usuarios"></select>
+                <span asp-validation-for="UsuarioId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="arquivo">Foto de perfil (150x150 máx.)</label>
+                <input type="file" name="arquivo" class="form-control-file" />
+
+                @* Exibe erro se houver mensagem de validação para 'Arquivo' *@
+                @if (ViewData.ModelState["Arquivo"]?.Errors.Count > 0)
+                {
+                    <span class="text-danger">@ViewData.ModelState["Arquivo"].Errors[0].ErrorMessage</span>
+                }
+            </div>
+
+
+            @if (Model.Usuario?.Arquivo != null)
+            {
+                <div class="form-group">
+                    <label>Imagem atual:</label><br />
+                    <img src="~/uploads/@Model.Usuario.Arquivo" alt="Imagem atual" class="img-thumbnail" width="150" height="150" />
+                </div>
+            }
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

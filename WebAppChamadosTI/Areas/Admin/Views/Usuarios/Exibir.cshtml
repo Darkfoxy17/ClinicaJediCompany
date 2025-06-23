@@ -1,0 +1,42 @@
+﻿@model WebAppChamadosTI.Models.Usuario
+
+@{
+    ViewData["Title"] = "Exibir";
+}
+
+<h1>Detalhes</h1>
+<div>
+    <div class="row">
+        <div class="col-sm-2">
+            <img src="/uploads/@(string.IsNullOrEmpty(Model.Arquivo) ? "default-user.png" : Model.Arquivo)"
+                 class="figure-img"
+                 style="width:150px;height:150px;object-fit:cover;" />
+        </div>
+    </div>
+    <h4>Usuario</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Perfil)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Perfil)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Inativo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Inativo)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Alterar</a> |
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

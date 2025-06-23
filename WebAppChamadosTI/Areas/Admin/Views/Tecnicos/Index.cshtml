@@ -1,0 +1,66 @@
+﻿@model IEnumerable<WebAppChamadosTI.Models.Tecnico>
+
+@{
+    ViewData["Title"] = "Tecnicos";
+}
+
+<h1>Tecnicos</h1>
+<div class="d-flex justify-content-between">
+    <div>
+        <a asp-action="Incluir" class="btn btn-success btn-sm">Incluir</a>
+    </div>
+    <form asp-action="Index" method="post">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <label>Pesquisa</label>
+            </div>
+            <div class="col-auto">
+                <input type="search" name="busca" id="busca"
+                       class="form-control-sm" />
+            </div>
+            <div class="col-auto">
+                <button type="submit"
+                        class="btn btn-primary btn-sm">
+                    Buscar
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Especialidade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Especialidade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario.Email)
+            </td>
+            <td>
+                    <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |
+                    <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Exibir</a> |
+                    <a asp-action="Excluir" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Excluir</a>
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

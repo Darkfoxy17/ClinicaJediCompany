@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="nav-buttons">
+    <a asp-controller="Conta" asp-action="Entrar">Login</a>
+    <a asp-controller="Conta" asp-action="Registrar" asp-route-perfil="Cliente">Registrar</a>
+</div>

@@ -1,0 +1,45 @@
+﻿@model WebAppChamadosTI.Models.ContaViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Entrar";
+}
+
+
+
+<div class="row">
+    <div class="col-md-4 coll-md-4 offset-md-4">
+        <h4>Entre com sua conta!</h4>
+        <hr />
+        <form asp-action="Entrar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Senha" class="control-label"></label>
+                <input asp-for="Senha" class="form-control" />
+                <span asp-validation-for="Senha" class="text-danger"></span>
+            </div>
+            <div class="form-group p-2 text-center">
+                <input type="submit" value="Entrar" class="btn btn-primary" />
+                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Voltar</a>
+            </div>
+            <div class="form-group">
+                <p>Ainda não possui uma conta? <a asp-action="Registrar" asp-route-perfil="Cliente">Registre-se!</a></p>
+                
+                @* ou
+                @* <a asp-action="Registrar" asp-route-perfil="Tecnico">Tecnico</a> *@
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,21 @@
+﻿
+<div class="container">
+	<div class="offset-4 col-md-4 offset-4">
+		<h3>Entre com sua conta</h3>
+		<form asp-action="Entrar" method="post">
+			<div class="mb-3">
+				<label for="email" class="form-label">E-mail</label>
+				<input type="email" class="form-control" id="email"
+					   name="email" placeholder="name@example.com" required>
+			</div>
+			<div class="mb-3">
+				<label for="senha" class="form-label">Senha</label>
+				<input type="password" class="form-control" id="senha" 
+					   name="senha" required />
+			</div>
+			<div class="mb-3">
+				<button type="submit" class="btn btn-primary">Entrar</button>
+			</div>
+		</form>
+	</div>
+</div>
