@@ -78,7 +78,7 @@ namespace WebAppChamadosTI.Controllers
                         return View(viewModel);
                     }
 
-                    Cliente cliente = new Cliente
+                    Paciente cliente = new Paciente
                     {
                         UsuarioId = usuario.Id,
                         Nome = viewModel.Nome,
@@ -97,7 +97,7 @@ namespace WebAppChamadosTI.Controllers
                         return View(viewModel);
                     }
 
-                    Tecnico tecnico = new Tecnico
+                    Dentista tecnico = new Dentista
                     {
                         UsuarioId = usuario.Id,
                         Nome = viewModel.Nome,

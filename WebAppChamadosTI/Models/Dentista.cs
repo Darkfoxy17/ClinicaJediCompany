@@ -5,20 +5,28 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace WebAppChamadosTI.Models
 {
     [Table("Tecnicos")]
-    public class Tecnico
+    public class Dentista
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Código")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Campo nome é obrigatório")]
+        [Required(ErrorMessage = "Campo obrigatório")]
         [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
         public string Nome { get; set; }
 
-        [Required(ErrorMessage = "Campo nome é obrigatório")]
-        [MaxLength(50, ErrorMessage = "Ultrapassou o máximo permitido")]
-        public string Especialidade { get; set; }
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(20, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Telefone { get; set; }
+
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(15, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string DataNascimento { get; set; }
+
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Endereco { get; set; }
 
         //Fks
         public int UsuarioId { get; set; }
@@ -28,6 +36,6 @@ namespace WebAppChamadosTI.Models
 
         //Relacionamento
         [ValidateNever]
-        public virtual ICollection<Chamado> Chamados { get; set; }
+        public virtual ICollection<Agendamento> Chamados { get; set; }
     }
 }

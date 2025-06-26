@@ -7,55 +7,16 @@ using System.Drawing;
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Atendente")]
     public class UsuariosController : Controller
     {
         BancoDados bd;
         IWebHostEnvironment servidorweb;
 
-        public UsuariosController(IWebHostEnvironment webHostEnvironment)
-        {
-            servidorweb = webHostEnvironment;
-        }
-
-        public string SalvarArquivo(IFormFile arquivo)
-        {
-            if (arquivo == null)
-            {
-                return string.Empty;
-            }
-
-            string extensao = Path.GetExtension(arquivo.FileName).TrimStart('.');
-            string nomeArquivo = $"{Guid.NewGuid()}.{extensao}";
-            string pastaArquivo = Path.Combine(servidorweb.WebRootPath, "uploads");
-            string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
-
-            using (var dadosArquivo = new FileStream(caminhoArquivo, FileMode.Create))
-            {
-                arquivo.CopyTo(dadosArquivo);
-            }
-
-            return nomeArquivo;
-        }
-
-        private bool ExcluirArquivo(string nomeArquivo)
-        {
-            if (string.IsNullOrEmpty(nomeArquivo) || nomeArquivo == "default-user.png")
-            {
-                return false;
-            }
-
-            string pastaArquivo = Path.Combine(servidorweb.WebRootPath, "uploads");
-            string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
-
-            if (System.IO.File.Exists(caminhoArquivo))
-            {
-                System.IO.File.Delete(caminhoArquivo);
-                return true;
-            }
-
-            return false;
-        }
+        //public UsuariosController(IWebHostEnvironment webHostEnvironment)
+        //{
+        //    servidorweb = webHostEnvironment;
+        //}
 
         public IActionResult Index()
         {
@@ -100,27 +61,16 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                     ModelState.AddModelError("Email", "Conta de e-mail já cadastrada!");
                     return View(usuario);
                 }
-
-                if (arquivo != null)
-                {
-                    var nomeArquivo = SalvarArquivo(arquivo);
-                    model.Arquivo = nomeArquivo;
-                }
-                else
-                {
-                    model.Arquivo = "default-user.png";
-                }
-
                 bd.Usuarios.Add(model);
                 bd.SaveChanges();
 
-                if (model.Perfil == Perfil.Cliente)
+                if (model.Perfil == Perfil.Paciente)
                 {
-                    return RedirectToAction("Incluir", "Clientes", new { area = "Admin", idusuario = model.Id });
+                    return RedirectToAction("Incluir", "Pacientes", new { area = "Admin", idusuario = model.Id });
                 }
                 else
                 {
-                    return RedirectToAction("Incluir", "Tecnicos", new { area = "Admin", idusuario = model.Id });
+                    return RedirectToAction("Incluir", "Dentistas", new { area = "Admin", idusuario = model.Id });
                 }
             }
 

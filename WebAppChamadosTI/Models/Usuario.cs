@@ -24,26 +24,26 @@ namespace WebAppChamadosTI.Models
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
-        public bool Inativo { get; set; }
+        //public bool Inativo { get; set; }
 
         public Perfil Perfil { get; set; }
 
-        [ValidateNever]
-        public string? Arquivo { get; set; }
+        //[ValidateNever]
+        //public string? Arquivo { get; set; }
 
         //Relacionamentos
         [ValidateNever]
-        public virtual ICollection<Cliente> Clientes { get; set; }
+        public virtual ICollection<Paciente> Pacientes { get; set; }
         [ValidateNever]
-        public virtual ICollection<Tecnico> Tecnicos { get; set; }
+        public virtual ICollection<Dentista> Dentistas { get; set; }
 
     }
 
     public enum Perfil
     {
-        Cliente = 0,
-        Tecnico = 1,
-        Administrador= 2,
+        Paciente = 0,
+        Dentista = 1,
+        Atendente = 2,
     }
 
 }

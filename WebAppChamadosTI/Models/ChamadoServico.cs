@@ -12,7 +12,7 @@ namespace WebAppChamadosTI.Models
         // FK
         public int ClienteId { get; set; }
         [ForeignKey(nameof(ClienteId))]
-        public virtual Cliente Cliente { get; set; }
+        public virtual Paciente Cliente { get; set; }
         // Relacionamento
 
     }

@@ -5,24 +5,28 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace WebAppChamadosTI.Models
 {
     [Table("Clientes")]
-    public class Cliente
+    public class Paciente
     {
-        [Key] // Chave primária
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Código gerado automaticamente
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Código")]
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Campo obrigatório")]
         [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
-        [Required(ErrorMessage = "Campo nome é obrigatório")]
         public string Nome { get; set; }
 
-        [MaxLength(50, ErrorMessage = "Ultrapassou o máximo permitido")]
-        [Required(ErrorMessage = "Campo profissão é obrigatório")]
-        [Display(Name = "Profissão")]
-        public string Profissao { get; set; }
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(20, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Telefone { get; set; }
 
-        [MaxLength(30, ErrorMessage = "Ultrapassou o máximo permitido")]
-        public string? Setor { get; set; } // Campo opcional
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(15, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string DataNascimento { get; set; }
+
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Endereco { get; set; }
 
         // Chave estrangeira
         [Display(Name = "Identificação do Usuário")]
@@ -34,6 +38,6 @@ namespace WebAppChamadosTI.Models
 
         // Relacionamento N:1 com chamados
         [ValidateNever]
-        public virtual ICollection<Chamado> Chamados { get; set; }
+        public virtual ICollection<Agendamento> Agendamentos { get; set; }
     }
 }

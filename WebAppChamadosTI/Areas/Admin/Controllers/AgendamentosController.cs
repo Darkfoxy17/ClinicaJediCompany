@@ -9,42 +9,15 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Administrador, Tecnico, Cliente")]
-    public class ChamadosController : Controller
+    public class AgendamentosController : Controller
     {
         BancoDados bd;
         IWebHostEnvironment servidorWeb;
 
-        public ChamadosController(IWebHostEnvironment webHostEnvironment)
-        {
-            servidorWeb = webHostEnvironment;
-        }
-
-        private string SalvarArquivo(IFormFile arquivo)
-        {
-            if (arquivo == null)
-                return string.Empty;
-
-            string nomeArquivo = $"{Guid.NewGuid()}{Path.GetExtension(arquivo.FileName)}";
-            string pastaArquivo = Path.Combine(servidorWeb.WebRootPath, "uploads");
-            string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
-
-            using var dadosArquivo = new FileStream(caminhoArquivo, FileMode.Create);
-            arquivo.CopyTo(dadosArquivo);
-
-            return nomeArquivo;
-        }
-
-        private bool ExcluirArquivo(string nomeArquivo)
-        {
-            if (string.IsNullOrWhiteSpace(nomeArquivo))
-                return false;
-
-            string pastaArquivo = Path.Combine(servidorWeb.WebRootPath, "uploads");
-            string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
-            System.IO.File.Delete(caminhoArquivo);
-
-            return true;
-        }
+        //public ChamadosController(IWebHostEnvironment webHostEnvironment)
+        //{
+        //    servidorWeb = webHostEnvironment;
+        //}
 
         public IActionResult Index()
         {
@@ -61,9 +34,9 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Index(string Busca)
         {
             bd = new BancoDados();
-            var listaChamados = bd.Chamados
-                .Include(c => c.Cliente)
-                .Include(c => c.Tecnico)
+            var listaChamados = bd.Agendamentos
+                .Include(c => c.Paciente)
+                .Include(c => c.Dentista)
                 .ToList();
 
             if (!string.IsNullOrEmpty(Busca))
@@ -80,7 +53,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Incluir()
         {
             bd = new BancoDados();
-            var chamado = new Chamado
+            var chamado = new Agendamento
             {
                 DataSolicitacao = DateTime.Now // Preenche a data ao abrir o formulário
             };
@@ -93,7 +66,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Incluir(Chamado model)
+        public IActionResult Incluir(Agendamento model)
         {
             bd = new BancoDados();
 
@@ -137,7 +110,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Alterar(Chamado model)
+        public IActionResult Alterar(Agendamento model)
         {
             if (ModelState.IsValid)
             {
@@ -198,7 +171,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Excluir(Chamado model)
+        public IActionResult Excluir(Agendamento model)
         {
             bd = new BancoDados();
             var chamado = bd.Chamados.FirstOrDefault(c => c.Id == model.Id);

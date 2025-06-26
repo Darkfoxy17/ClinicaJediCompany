@@ -10,12 +10,12 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Administrador, Tecnico")]
-    public class ClientesController : Controller
+    public class DentistasController : Controller
     {
         BancoDados bd;
         IWebHostEnvironment servidorweb;
 
-        public ClientesController(IWebHostEnvironment webHostEnvironment)
+        public DentistasController(IWebHostEnvironment webHostEnvironment)
         {
             servidorweb = webHostEnvironment;
         }
@@ -23,9 +23,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public string SalvarArquivo(IFormFile arquivo)
         {
             if (arquivo == null)
-            {
                 return string.Empty;
-            }
 
             string extensao = Path.GetExtension(arquivo.FileName).TrimStart('.');
             string nomeArquivo = $"{Guid.NewGuid()}.{extensao}";
@@ -43,9 +41,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         private bool ExcluirArquivo(string nomeArquivo)
         {
             if (string.IsNullOrEmpty(nomeArquivo) || nomeArquivo == "default-user.png")
-            {
                 return false;
-            }
 
             string pastaArquivo = Path.Combine(servidorweb.WebRootPath, "uploads");
             string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
@@ -63,30 +59,31 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Index()
         {
             bd = new BancoDados();
-            var listaClientes = bd.Clientes
+            var listaTecnicos = bd.Tecnicos
                 .Include(u => u.Usuario)
                 .ToList();
-            return View(listaClientes);
+            return View(listaTecnicos);
         }
 
         [HttpPost]
         public IActionResult Index(string busca)
         {
             bd = new BancoDados();
-            var listaClientes = bd.Clientes
+            var listaTecnicos = bd.Tecnicos
                 .Include(u => u.Usuario)
                 .ToList();
+
             if (!string.IsNullOrWhiteSpace(busca))
             {
-                listaClientes = listaClientes
-                    .Where(c =>
-                        c.Nome.Contains(busca) ||
-                        c.Profissao.Contains(busca) ||
-                        c.Setor.Contains(busca) ||
-                        c.Usuario.Email.Contains(busca))
+                listaTecnicos = listaTecnicos
+                    .Where(t =>
+                        t.Nome.Contains(busca) ||
+                        t.Especialidade.Contains(busca) ||
+                        t.Usuario.Email.Contains(busca))
                     .ToList();
             }
-            return View(listaClientes);
+
+            return View(listaTecnicos);
         }
 
         [HttpGet]
@@ -96,40 +93,39 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             var listaUsuarios = bd.Usuarios.ToList();
             ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email");
 
-            Cliente cliente = new Cliente();
-            return View(cliente);
+            return View(new Dentista());
         }
 
-        [HttpGet("Admin/Clientes/Incluir/{idusuario}")]
+        [HttpGet("Admin/Tecnicos/Incluir/{idusuario}")]
         public IActionResult Incluir(int idusuario)
         {
             bd = new BancoDados();
             var listaUsuarios = bd.Usuarios.Where(u => u.Id == idusuario).ToList();
             ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", idusuario);
 
-            Cliente cliente = new Cliente();
-            return View(cliente);
+            return View(new Dentista());
         }
 
-        [HttpPost("Admin/Clientes/Incluir/{idusuario}")]
+        [HttpPost("Admin/Tecnicos/Incluir/{idusuario}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Incluir(int idusuario, Cliente model)
+        public IActionResult Incluir(int idusuario, Dentista model)
         {
             bd = new BancoDados();
             if (ModelState.IsValid)
             {
-                var cliente = bd.Clientes.FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
                 var tecnico = bd.Tecnicos.FirstOrDefault(t => t.UsuarioId == model.UsuarioId);
+                var cliente = bd.Clientes.FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
 
-                if (cliente == null && tecnico == null)
+                if (tecnico == null && cliente == null)
                 {
-                    bd.Clientes.Add(model);
+                    bd.Tecnicos.Add(model);
                     bd.SaveChanges();
                     return RedirectToAction("Index");
                 }
 
                 ModelState.AddModelError("Nome", "Já possui cadastro vinculado!");
             }
+
             var listaUsuarios = bd.Usuarios.ToList();
             ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", model.UsuarioId);
             return View(model);
@@ -139,54 +135,50 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Alterar(int id)
         {
             bd = new BancoDados();
-            var cliente = bd.Clientes
-                .Include(c => c.Usuario)
-                .FirstOrDefault(c => c.Id == id);
+            var tecnico = bd.Tecnicos
+                .Include(t => t.Usuario)
+                .FirstOrDefault(t => t.Id == id);
 
-            if (cliente == null)
-            {
+            if (tecnico == null)
                 return NotFound();
-            }
 
             var listaUsuarios = bd.Usuarios.ToList();
-            ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", cliente.UsuarioId);
+            ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", tecnico.UsuarioId);
 
-            return View(cliente);
+            return View(tecnico);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Alterar(Cliente model, IFormFile? arquivo)
+        public IActionResult Alterar(Dentista model, IFormFile? arquivo)
         {
             bd = new BancoDados();
             if (ModelState.IsValid)
             {
-                var outroCliente = bd.Clientes
-                    .FirstOrDefault(c => c.UsuarioId == model.UsuarioId && c.Id != model.Id);
+                var outroTecnico = bd.Tecnicos
+                    .FirstOrDefault(t => t.UsuarioId == model.UsuarioId && t.Id != model.Id);
+                var cliente = bd.Clientes
+                    .FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
 
-                var tecnico = bd.Tecnicos
-                    .FirstOrDefault(t => t.UsuarioId == model.UsuarioId);
-
-                if (outroCliente == null && tecnico == null)
+                if (outroTecnico == null && cliente == null)
                 {
-                    var cliente = bd.Clientes
-                        .Include(c => c.Usuario)
-                        .FirstOrDefault(c => c.Id == model.Id);
+                    var tecnico = bd.Tecnicos
+                        .Include(t => t.Usuario)
+                        .FirstOrDefault(t => t.Id == model.Id);
 
-                    if (cliente == null)
+                    if (tecnico == null)
                         return NotFound();
 
-                    cliente.Nome = model.Nome;
-                    cliente.Profissao = model.Profissao;
-                    cliente.Setor = model.Setor;
-                    cliente.UsuarioId = model.UsuarioId;
+                    tecnico.Nome = model.Nome;
+                    tecnico.Especialidade = model.Especialidade;
+                    tecnico.UsuarioId = model.UsuarioId;
 
                     if (arquivo != null)
                     {
                         try
                         {
                             using (var stream = arquivo.OpenReadStream())
-                            using (var image = System.Drawing.Image.FromStream(stream))
+                            using (var image = Image.FromStream(stream))
                             {
                                 if (image.Width > 150 || image.Height > 150)
                                 {
@@ -195,11 +187,11 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                                 }
                             }
 
-                            if (!string.IsNullOrWhiteSpace(cliente.Usuario.Arquivo))
-                                ExcluirArquivo(cliente.Usuario.Arquivo);
+                            if (!string.IsNullOrWhiteSpace(tecnico.Usuario.Arquivo))
+                                ExcluirArquivo(tecnico.Usuario.Arquivo);
 
                             var nomeArquivo = SalvarArquivo(arquivo);
-                            cliente.Usuario.Arquivo = nomeArquivo;
+                            tecnico.Usuario.Arquivo = nomeArquivo;
                         }
                         catch
                         {
@@ -218,7 +210,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         RetornaErro:
             var listaUsuarios = bd.Usuarios.ToList();
             ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", model.UsuarioId);
-
             return View(model);
         }
 
@@ -226,38 +217,41 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Exibir(int id)
         {
             bd = new BancoDados();
-            var cliente = bd.Clientes
-                .Include(c => c.Usuario)
-                .FirstOrDefault(c => c.Id == id);
-            return View(cliente);
+            var tecnico = bd.Tecnicos
+                .Include(t => t.Usuario)
+                .FirstOrDefault(t => t.Id == id);
+
+            return View(tecnico);
         }
 
         [HttpGet]
         public IActionResult Excluir(int id)
         {
             bd = new BancoDados();
-            var cliente = bd.Clientes
-                .Include(c => c.Usuario)
-                .FirstOrDefault(u => u.Id == id);
-            if (cliente == null)
-            {
+            var tecnico = bd.Tecnicos
+                .Include(t => t.Usuario)
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tecnico == null)
                 return NotFound();
-            }
-            return View(cliente);
+
+            return View(tecnico);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Excluir(Cliente model)
+        public IActionResult Excluir(Dentista model)
         {
             bd = new BancoDados();
-            var cliente = bd.Clientes.FirstOrDefault(u => u.Id == model.Id);
-            if (model.Id > 0)
+            var tecnico = bd.Tecnicos.FirstOrDefault(t => t.Id == model.Id);
+
+            if (tecnico != null)
             {
-                bd.Clientes.Remove(cliente);
+                bd.Tecnicos.Remove(tecnico);
                 bd.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(model);
         }
     }
