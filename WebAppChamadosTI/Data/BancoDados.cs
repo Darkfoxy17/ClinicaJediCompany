@@ -8,22 +8,22 @@ namespace WebAppChamadosTI.Data
         string conexao;
 
         //Mapeamento das tabelas do banco de dados
-        public DbSet<Paciente> Clientes { get; set; }
-        public DbSet<Dentista> Tecnicos { get; set; }
-        public DbSet<Agendamento> Chamados { get; set; }
+        public DbSet<Paciente> Pacientes { get; set; }
+        public DbSet<Dentista> Dentistas { get; set; }
+        public DbSet<Agendamento> Agendamentos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Agendamento>()
-                .HasOne(b => b.Cliente)
-                .WithMany(a => a.Chamados)
+                .HasOne(b => b.Paciente)
+                .WithMany(a => a.Agendamentos)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Agendamento>()
-                .HasOne(b => b.Tecnico)
-                .WithMany(a => a.Chamados)
+                .HasOne(b => b.Dentista)
+                .WithMany(a => a.Agendamentos)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 

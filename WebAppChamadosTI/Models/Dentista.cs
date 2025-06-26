@@ -36,6 +36,6 @@ namespace WebAppChamadosTI.Models
 
         //Relacionamento
         [ValidateNever]
-        public virtual ICollection<Agendamento> Chamados { get; set; }
+        public virtual ICollection<Agendamento> Agendamentos { get; set; }
     }
 }
