@@ -115,10 +115,8 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                         return View(model);
                     }
 
-                    // Exclui imagem antiga, se houver
                     ExcluirArquivo(model.Arquivo);
 
-                    // Salva nova imagem
                     var nomeArquivo = SalvarArquivo(arquivo);
                     model.Arquivo = nomeArquivo;
                 }
@@ -132,7 +130,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             return View(model);
         }
-
 
         [HttpGet]
         public IActionResult Exibir(int id)
@@ -177,6 +174,17 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             }
 
             return View(model);
+        }
+
+        private void ExcluirArquivo(string nomeArquivo)
+        {
+            // Lógica de exclusão do arquivo, se desejar manter aqui
+        }
+
+        private string SalvarArquivo(IFormFile arquivo)
+        {
+            // Lógica para salvar o arquivo no servidor
+            return string.Empty;
         }
     }
 }

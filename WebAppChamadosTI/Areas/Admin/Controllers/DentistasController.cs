@@ -59,23 +59,23 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Index()
         {
             bd = new BancoDados();
-            var listaTecnicos = bd.Tecnicos
+            var listaDentistas = bd.Dentistas
                 .Include(u => u.Usuario)
                 .ToList();
-            return View(listaTecnicos);
+            return View(listaDentistas);
         }
 
         [HttpPost]
         public IActionResult Index(string busca)
         {
             bd = new BancoDados();
-            var listaTecnicos = bd.Tecnicos
+            var listaDentistas = bd.Dentistas
                 .Include(u => u.Usuario)
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(busca))
             {
-                listaTecnicos = listaTecnicos
+                listaDentistas = listaDentistas
                     .Where(t =>
                         t.Nome.Contains(busca) ||
                         t.Especialidade.Contains(busca) ||
@@ -83,7 +83,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                     .ToList();
             }
 
-            return View(listaTecnicos);
+            return View(listaDentistas);
         }
 
         [HttpGet]
@@ -96,7 +96,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             return View(new Dentista());
         }
 
-        [HttpGet("Admin/Tecnicos/Incluir/{idusuario}")]
+        [HttpGet("Admin/Dentistas/Incluir/{idusuario}")]
         public IActionResult Incluir(int idusuario)
         {
             bd = new BancoDados();
@@ -106,19 +106,19 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             return View(new Dentista());
         }
 
-        [HttpPost("Admin/Tecnicos/Incluir/{idusuario}")]
+        [HttpPost("Admin/Dentistas/Incluir/{idusuario}")]
         [ValidateAntiForgeryToken]
         public IActionResult Incluir(int idusuario, Dentista model)
         {
             bd = new BancoDados();
             if (ModelState.IsValid)
             {
-                var tecnico = bd.Tecnicos.FirstOrDefault(t => t.UsuarioId == model.UsuarioId);
-                var cliente = bd.Clientes.FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
+                var dentista = bd.Dentistas.FirstOrDefault(t => t.UsuarioId == model.UsuarioId);
+                var paciente = bd.Pacientes.FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
 
-                if (tecnico == null && cliente == null)
+                if (dentista == null && paciente == null)
                 {
-                    bd.Tecnicos.Add(model);
+                    bd.Dentistas.Add(model);
                     bd.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -135,17 +135,17 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Alterar(int id)
         {
             bd = new BancoDados();
-            var tecnico = bd.Tecnicos
+            var dentista = bd.Dentistas
                 .Include(t => t.Usuario)
                 .FirstOrDefault(t => t.Id == id);
 
-            if (tecnico == null)
+            if (dentista == null)
                 return NotFound();
 
             var listaUsuarios = bd.Usuarios.ToList();
-            ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", tecnico.UsuarioId);
+            ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", dentista.UsuarioId);
 
-            return View(tecnico);
+            return View(dentista);
         }
 
         [HttpPost]
@@ -155,23 +155,23 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             bd = new BancoDados();
             if (ModelState.IsValid)
             {
-                var outroTecnico = bd.Tecnicos
+                var outroDentista = bd.Dentistas
                     .FirstOrDefault(t => t.UsuarioId == model.UsuarioId && t.Id != model.Id);
-                var cliente = bd.Clientes
+                var paciente = bd.Pacientes
                     .FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
 
-                if (outroTecnico == null && cliente == null)
+                if (outroDentista == null && paciente == null)
                 {
-                    var tecnico = bd.Tecnicos
+                    var dentista = bd.Dentistas
                         .Include(t => t.Usuario)
                         .FirstOrDefault(t => t.Id == model.Id);
 
-                    if (tecnico == null)
+                    if (dentista == null)
                         return NotFound();
 
-                    tecnico.Nome = model.Nome;
-                    tecnico.Especialidade = model.Especialidade;
-                    tecnico.UsuarioId = model.UsuarioId;
+                    dentista.Nome = model.Nome;
+                    dentista.Especialidade = model.Especialidade;
+                    dentista.UsuarioId = model.UsuarioId;
 
                     if (arquivo != null)
                     {
@@ -187,11 +187,11 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                                 }
                             }
 
-                            if (!string.IsNullOrWhiteSpace(tecnico.Usuario.Arquivo))
-                                ExcluirArquivo(tecnico.Usuario.Arquivo);
+                            if (!string.IsNullOrWhiteSpace(dentista.Usuario.Arquivo))
+                                ExcluirArquivo(dentista.Usuario.Arquivo);
 
                             var nomeArquivo = SalvarArquivo(arquivo);
-                            tecnico.Usuario.Arquivo = nomeArquivo;
+                            dentista.Usuario.Arquivo = nomeArquivo;
                         }
                         catch
                         {
@@ -217,25 +217,25 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Exibir(int id)
         {
             bd = new BancoDados();
-            var tecnico = bd.Tecnicos
+            var dentista = bd.Dentistas
                 .Include(t => t.Usuario)
                 .FirstOrDefault(t => t.Id == id);
 
-            return View(tecnico);
+            return View(dentista);
         }
 
         [HttpGet]
         public IActionResult Excluir(int id)
         {
             bd = new BancoDados();
-            var tecnico = bd.Tecnicos
+            var dentista = bd.Dentistas
                 .Include(t => t.Usuario)
                 .FirstOrDefault(t => t.Id == id);
 
-            if (tecnico == null)
+            if (dentista == null)
                 return NotFound();
 
-            return View(tecnico);
+            return View(dentista);
         }
 
         [HttpPost]
@@ -243,11 +243,11 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Excluir(Dentista model)
         {
             bd = new BancoDados();
-            var tecnico = bd.Tecnicos.FirstOrDefault(t => t.Id == model.Id);
+            var dentista = bd.Dentistas.FirstOrDefault(t => t.Id == model.Id);
 
-            if (tecnico != null)
+            if (dentista != null)
             {
-                bd.Tecnicos.Remove(tecnico);
+                bd.Dentistas.Remove(dentista);
                 bd.SaveChanges();
                 return RedirectToAction("Index");
             }

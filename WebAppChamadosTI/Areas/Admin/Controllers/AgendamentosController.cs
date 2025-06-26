@@ -14,54 +14,54 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         BancoDados bd;
         IWebHostEnvironment servidorWeb;
 
-        //public ChamadosController(IWebHostEnvironment webHostEnvironment)
-        //{
-        //    servidorWeb = webHostEnvironment;
-        //}
+        // public AgendamentosController(IWebHostEnvironment webHostEnvironment)
+        // {
+        //     servidorWeb = webHostEnvironment;
+        // }
 
         public IActionResult Index()
         {
             bd = new BancoDados();
-            var listaChamados = bd.Chamados
-                .Include(c => c.Cliente)
-                .Include(c => c.Tecnico)
+            var listaAgendamentos = bd.Agendamentos
+                .Include(a => a.Paciente)
+                .Include(a => a.Dentista)
                 .ToList();
 
-            return View(listaChamados);
+            return View(listaAgendamentos);
         }
 
         [HttpPost]
-        public IActionResult Index(string Busca)
+        public IActionResult Index(string busca)
         {
             bd = new BancoDados();
-            var listaChamados = bd.Agendamentos
-                .Include(c => c.Paciente)
-                .Include(c => c.Dentista)
+            var listaAgendamentos = bd.Agendamentos
+                .Include(a => a.Paciente)
+                .Include(a => a.Dentista)
                 .ToList();
 
-            if (!string.IsNullOrEmpty(Busca))
+            if (!string.IsNullOrEmpty(busca))
             {
-                listaChamados = listaChamados
-                    .Where(u => u.DataSolicitacao.ToString("dd/MM/yyyy").Contains(Busca))
+                listaAgendamentos = listaAgendamentos
+                    .Where(a => a.DataHora.ToString("dd/MM/yyyy").Contains(busca))
                     .ToList();
             }
 
-            return View(listaChamados);
+            return View(listaAgendamentos);
         }
 
         [HttpGet]
         public IActionResult Incluir()
         {
             bd = new BancoDados();
-            var chamado = new Agendamento
+            var agendamento = new Agendamento
             {
-                DataSolicitacao = DateTime.Now // Preenche a data ao abrir o formulário
+                DataHora = DateTime.Now
             };
 
-            ViewBag.Tecnicos = new SelectList(bd.Tecnicos.ToList(), "Id", "Nome");
-            ViewBag.Clientes = new SelectList(bd.Clientes.ToList(), "Id", "Nome");
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome");
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome");
 
-            return View(chamado);
+            return View(agendamento);
         }
 
         [HttpPost]
@@ -70,13 +70,13 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         {
             bd = new BancoDados();
 
-            ViewBag.Tecnicos = new SelectList(bd.Tecnicos.ToList(), "Id", "Nome", model.TecnicoId);
-            ViewBag.Clientes = new SelectList(bd.Clientes.ToList(), "Id", "Nome", model.ClienteId);
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome", model.DentistaId);
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome", model.PacienteId);
 
             if (ModelState.IsValid)
             {
-                model.DataSolicitacao = DateTime.Now; // Reforça a data no momento do post
-                bd.Chamados.Add(model);
+                model.DataHora = DateTime.Now;
+                bd.Agendamentos.Add(model);
                 bd.SaveChanges();
 
                 return RedirectToAction("Index");
@@ -85,28 +85,25 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             return View(model);
         }
 
-
         [HttpGet]
         public IActionResult Alterar(int id)
         {
             bd = new BancoDados();
-            var chamado = bd.Chamados
-                .Include(c => c.Cliente)
-                .Include(c => c.Tecnico)
-                .FirstOrDefault(c => c.Id == id);
+            var agendamento = bd.Agendamentos
+                .Include(a => a.Paciente)
+                .Include(a => a.Dentista)
+                .FirstOrDefault(a => a.Id == id);
 
-            if (chamado == null)
+            if (agendamento == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Tecnicos = new SelectList(bd.Tecnicos.ToList(), "Id", "Nome", chamado.TecnicoId);
-            ViewBag.Clientes = new SelectList(bd.Clientes.ToList(), "Id", "Nome", chamado.ClienteId);
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome", agendamento.DentistaId);
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome", agendamento.PacienteId);
 
-            return View(chamado);
+            return View(agendamento);
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -115,58 +112,56 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 bd = new BancoDados();
+                var agendamentoExistente = bd.Agendamentos.FirstOrDefault(a => a.Id == model.Id);
 
-                var chamadoExistente = bd.Chamados.FirstOrDefault(c => c.Id == model.Id);
-                if (chamadoExistente == null)
+                if (agendamentoExistente == null)
                     return NotFound();
 
-                // Atualize apenas os campos editáveis
-                chamadoExistente.Problema = model.Problema;
-                chamadoExistente.Ocorrencia = model.Ocorrencia;
-                chamadoExistente.ValorTotal = model.ValorTotal;
-                chamadoExistente.ClienteId = model.ClienteId;
-                chamadoExistente.TecnicoId = model.TecnicoId;
-                chamadoExistente.Concluido = model.Concluido;
+                agendamentoExistente.Motivo = model.Motivo;
+                agendamentoExistente.Observacao = model.Observacao;
+                agendamentoExistente.Valor = model.Valor;
+                agendamentoExistente.PacienteId = model.PacienteId;
+                agendamentoExistente.DentistaId = model.DentistaId;
+                agendamentoExistente.Concluido = model.Concluido;
 
                 bd.SaveChanges();
-
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Clientes = new SelectList(bd.Clientes.ToList(), "Id", "Nome", model.ClienteId);
-            ViewBag.Tecnicos = new SelectList(bd.Tecnicos.ToList(), "Id", "Nome", model.TecnicoId);
+            bd = new BancoDados();
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome", model.PacienteId);
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome", model.DentistaId);
             return View(model);
         }
-
 
         [HttpGet]
         public IActionResult Exibir(int id)
         {
             bd = new BancoDados();
-            var chamado = bd.Chamados
-                .Include(c => c.Cliente)
-                .Include(c => c.Tecnico)
-                .FirstOrDefault(c => c.Id == id);
+            var agendamento = bd.Agendamentos
+                .Include(a => a.Paciente)
+                .Include(a => a.Dentista)
+                .FirstOrDefault(a => a.Id == id);
 
-            if (chamado == null)
+            if (agendamento == null)
                 return NotFound();
 
-            return View(chamado);
+            return View(agendamento);
         }
 
         [HttpGet]
         public IActionResult Excluir(int id)
         {
             bd = new BancoDados();
-            var chamado = bd.Chamados
-                .Include(c => c.Cliente)
-                .Include(c => c.Tecnico)
-                .FirstOrDefault(c => c.Id == id);
+            var agendamento = bd.Agendamentos
+                .Include(a => a.Paciente)
+                .Include(a => a.Dentista)
+                .FirstOrDefault(a => a.Id == id);
 
-            if (chamado == null)
+            if (agendamento == null)
                 return NotFound();
 
-            return View(chamado);
+            return View(agendamento);
         }
 
         [HttpPost]
@@ -174,11 +169,11 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Excluir(Agendamento model)
         {
             bd = new BancoDados();
-            var chamado = bd.Chamados.FirstOrDefault(c => c.Id == model.Id);
+            var agendamento = bd.Agendamentos.FirstOrDefault(a => a.Id == model.Id);
 
-            if (chamado != null)
+            if (agendamento != null)
             {
-                bd.Chamados.Remove(chamado);
+                bd.Agendamentos.Remove(agendamento);
                 bd.SaveChanges();
                 return RedirectToAction("Index");
             }
