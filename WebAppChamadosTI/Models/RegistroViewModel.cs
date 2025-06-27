@@ -26,10 +26,6 @@ namespace WebAppChamadosTI.Models
         [Required(ErrorMessage = "Campo nome é obrigatório")]
         public string Nome { get; set; }
 
-        [MaxLength(50, ErrorMessage = "Ultrapassou o máximo permitido")]
-        [Display(Name = "Profissão")]
-        public string? Profissao { get; set; }
-
         //dados do tecnico
         [MaxLength(50, ErrorMessage = "Ultrapassou o máximo permitido")]
         public string? Especialidade { get; set; }

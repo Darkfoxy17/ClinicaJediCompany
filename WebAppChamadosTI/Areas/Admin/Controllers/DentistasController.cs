@@ -78,7 +78,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 listaDentistas = listaDentistas
                     .Where(t =>
                         t.Nome.Contains(busca) ||
-                        t.Especialidade.Contains(busca) ||
                         t.Usuario.Email.Contains(busca))
                     .ToList();
             }
@@ -170,7 +169,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                         return NotFound();
 
                     dentista.Nome = model.Nome;
-                    dentista.Especialidade = model.Especialidade;
                     dentista.UsuarioId = model.UsuarioId;
 
                     if (arquivo != null)

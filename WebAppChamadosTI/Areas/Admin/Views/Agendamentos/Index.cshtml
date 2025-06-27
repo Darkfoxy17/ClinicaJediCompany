@@ -13,53 +13,48 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DataSolicitacao)
+                @Html.DisplayNameFor(model => model.Paciente)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Problema)
+                @Html.DisplayNameFor(model => model.Dentista)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ocorrencia)
+                @Html.DisplayNameFor(model => model.Procedimento)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ValorTotal)
+                @Html.DisplayNameFor(model => model.Data)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cliente)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tecnico)
-            <th>
-                @Html.DisplayNameFor(model => model.Concluido)
+                @Html.DisplayNameFor(model => model.Descricao)
             </th>
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.DataSolicitacao)
+                @Html.DisplayFor(modelItem => item.Paciente.Nome)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Problema)
+                @Html.DisplayFor(modelItem => item.Dentista.Nome)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ocorrencia)
+                @Html.DisplayFor(modelItem => item.Procedimento)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ValorTotal)
+                @Html.DisplayFor(modelItem => item.Data)
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.Cliente.Nome)
+                @Html.DisplayFor(modelItem => item.Status)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tecnico.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Concluido)
-             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descricao)
+                </td>
+
             <td>
                     <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |
                     <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Exibir</a> |

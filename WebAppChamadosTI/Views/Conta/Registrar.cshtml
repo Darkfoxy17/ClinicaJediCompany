@@ -9,7 +9,7 @@
     <div class="offset-md-4 col-md-4 offset-md-4">
         <h4>Registro de usuário @* (@Model.Perfil.ToString()) *@</h4>
         <hr />
-        <form asp-action="Registrar" enctype="multipart/form-data">
+        <form asp-action="Registrar">
             <fieldset>
                 <legend>Usuário</legend>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -34,33 +34,6 @@
                     <input asp-for="Perfil" class="form-control" readonly />
                     <span asp-validation-for="Perfil" class="text-danger"></span>
                 </div> *@
-
-            @if (Model.Perfil == Perfil.Cliente)
-            {
-                <fieldset>
-                    @* <legend>Cliente</legend> *@
-                    <div class="form-group">
-                        <label asp-for="Profissao" class="control-label"></label>
-                        <input asp-for="Profissao" class="form-control" />
-                        <span asp-validation-for="Profissao" class="text-danger"></span>
-                    </div>
-                </fieldset>
-            }
-            else
-            {
-                <fieldset>
-                    @* <legend>Técnico</legend> *@
-                    <div class="form-group">
-                        <label asp-for="Especialidade" class="control-label"></label>
-                        <input asp-for="Especialidade" class="form-control" />
-                        <span asp-validation-for="Especialidade" class="text-danger"></span>
-                    </div>
-                </fieldset>
-            }
-                <div class="form-group">
-                    <label class="control-label">Foto</label>
-                    <input type="file" name="arquivo" class="form-control" />
-                </div>
             </fieldset>
 
             <div class="form-group p-2 text-center">

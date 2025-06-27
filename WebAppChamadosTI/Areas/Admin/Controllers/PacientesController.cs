@@ -81,8 +81,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 listaPacientes = listaPacientes
                     .Where(c =>
                         c.Nome.Contains(busca) ||
-                        c.Profissao.Contains(busca) ||
-                        c.Setor.Contains(busca) ||
                         c.Usuario.Email.Contains(busca))
                     .ToList();
             }
@@ -177,8 +175,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                         return NotFound();
 
                     paciente.Nome = model.Nome;
-                    paciente.Profissao = model.Profissao;
-                    paciente.Setor = model.Setor;
                     paciente.UsuarioId = model.UsuarioId;
 
                     if (arquivo != null)

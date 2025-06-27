@@ -28,6 +28,10 @@ namespace WebAppChamadosTI.Models
         [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
         public string Endereco { get; set; }
 
+        [Required(ErrorMessage = "Campo obrigatório")]
+        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Especialidade { get; set; }
+
         //Fks
         public int UsuarioId { get; set; }
         [ForeignKey(nameof(UsuarioId))]

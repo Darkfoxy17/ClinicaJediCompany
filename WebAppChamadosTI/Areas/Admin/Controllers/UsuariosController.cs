@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WebAppChamadosTI.Data;
 using WebAppChamadosTI.Models;
-using System.Drawing;
 
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
@@ -11,12 +10,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
     public class UsuariosController : Controller
     {
         BancoDados bd;
-        IWebHostEnvironment servidorweb;
-
-        //public UsuariosController(IWebHostEnvironment webHostEnvironment)
-        //{
-        //    servidorweb = webHostEnvironment;
-        //}
 
         public IActionResult Index()
         {
@@ -50,7 +43,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Incluir(Usuario model, IFormFile? arquivo)
+        public IActionResult Incluir(Usuario model)
         {
             if (ModelState.IsValid)
             {
@@ -61,6 +54,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                     ModelState.AddModelError("Email", "Conta de e-mail já cadastrada!");
                     return View(usuario);
                 }
+
                 bd.Usuarios.Add(model);
                 bd.SaveChanges();
 
@@ -91,36 +85,10 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Alterar(Usuario model, IFormFile arquivo)
+        public IActionResult Alterar(Usuario model)
         {
             if (ModelState.IsValid)
             {
-                if (arquivo != null)
-                {
-                    try
-                    {
-                        using (var stream = arquivo.OpenReadStream())
-                        using (var image = System.Drawing.Image.FromStream(stream))
-                        {
-                            if (image.Width > 150 || image.Height > 150)
-                            {
-                                ModelState.AddModelError("Arquivo", "A imagem não pode ter mais que 150x150 pixels.");
-                                return View(model);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        ModelState.AddModelError("Arquivo", "Arquivo de imagem inválido.");
-                        return View(model);
-                    }
-
-                    ExcluirArquivo(model.Arquivo);
-
-                    var nomeArquivo = SalvarArquivo(arquivo);
-                    model.Arquivo = nomeArquivo;
-                }
-
                 bd = new BancoDados();
                 bd.Usuarios.Update(model);
                 bd.SaveChanges();
@@ -161,30 +129,14 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         {
             bd = new BancoDados();
             var usuario = bd.Usuarios.FirstOrDefault(u => u.Id == model.Id);
-            if (model.Id > 0)
+            if (usuario != null)
             {
-                if (!string.IsNullOrWhiteSpace(model.Arquivo))
-                {
-                    ExcluirArquivo(model.Arquivo);
-                }
-
                 bd.Usuarios.Remove(usuario);
                 bd.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             return View(model);
-        }
-
-        private void ExcluirArquivo(string nomeArquivo)
-        {
-            // Lógica de exclusão do arquivo, se desejar manter aqui
-        }
-
-        private string SalvarArquivo(IFormFile arquivo)
-        {
-            // Lógica para salvar o arquivo no servidor
-            return string.Empty;
         }
     }
 }

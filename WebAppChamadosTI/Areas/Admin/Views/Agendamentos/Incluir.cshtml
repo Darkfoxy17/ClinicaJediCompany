@@ -1,0 +1,64 @@
+﻿@model WebAppChamadosTI.Models.Agendamento
+
+@{
+    ViewData["Title"] = "Incluir";
+}
+
+<h1 class="mb-4">Incluir</h1>
+
+<h4 class="text-secondary">Chamado</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Incluir" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="PacienteId" class="form-label fw-bold text-primary">Paciente</label>
+                <select asp-for="PacienteId" class="form-control shadow-sm rounded" asp-items="ViewBag.Pacientes"></select>
+                <span asp-validation-for="PacienteId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DentistaId" class="form-label fw-bold text-primary">Dentista</label>
+                <select asp-for="DentistaId" class="form-control shadow-sm rounded" asp-items="ViewBag.Dentistas"></select>
+                <span asp-validation-for="DentistaId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Procedimento" class="form-label fw-bold text-primary"></label>
+                <textarea asp-for="Procedimento" class="form-control shadow-sm rounded"></textarea>
+                <span asp-validation-for="Procedimento" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Descricao" class="form-label fw-bold text-primary"></label>
+                <textarea asp-for="Descricao" class="form-control shadow-sm rounded"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Data" class="form-label fw-bold text-primary"></label>
+                <input asp-for="Data" class="form-control shadow-sm rounded" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" type="datetime-local" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Status" class="form-label fw-bold text-primary"></label>
+                <textarea asp-for="Status" class="form-control shadow-sm rounded"></textarea>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success me-2">Salvar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

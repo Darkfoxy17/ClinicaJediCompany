@@ -7,7 +7,6 @@ namespace WebAppChamadosTI.Models
     [Table("Usuarios")]
     public class Usuario
     {
-        //Pk
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -20,23 +19,18 @@ namespace WebAppChamadosTI.Models
 
         [Required(ErrorMessage = "Campo senha obrigatório")]
         [StringLength(50, ErrorMessage = "Ultrapassou o máximo permitido")]
-        [MinLength(8,ErrorMessage = "Senha com mínimo de 8 caracteres")]
+        [MinLength(8, ErrorMessage = "Senha com mínimo de 8 caracteres")]
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
-        //public bool Inativo { get; set; }
-
         public Perfil Perfil { get; set; }
 
-        //[ValidateNever]
-        //public string? Arquivo { get; set; }
-
-        //Relacionamentos
+        // Relacionamentos
         [ValidateNever]
         public virtual ICollection<Paciente> Pacientes { get; set; }
+
         [ValidateNever]
         public virtual ICollection<Dentista> Dentistas { get; set; }
-
     }
 
     public enum Perfil
@@ -45,5 +39,4 @@ namespace WebAppChamadosTI.Models
         Dentista = 1,
         Atendente = 2,
     }
-
 }

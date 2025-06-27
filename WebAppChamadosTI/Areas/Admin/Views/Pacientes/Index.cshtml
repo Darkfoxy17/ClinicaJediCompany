@@ -30,36 +30,47 @@
 <table class="table">
     <thead>
         <tr>
+
+            </th>
+            @Html.DisplayNameFor(model => model.Usuario.Email)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nome)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Profissao)
+                @Html.DisplayNameFor(model => model.Telefone)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.Setor)
-            </th> *@
             <th>
-                @Html.DisplayNameFor(model => model.Usuario.Email)
+                @Html.DisplayNameFor(model => model.DataNascimento)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Endereco)
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Profissao)
-            </td>
-@*             <td>
-                @Html.DisplayFor(modelItem => item.Setor)
-            </td> *@
-            <td>
                 @Html.DisplayFor(modelItem => item.Usuario.Email)
             </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Telefone)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.DataNascimento)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Endereco)
+            </td>
+
             <td>
                     <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |
                     <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Exibir</a> |

@@ -102,9 +102,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Chamados" asp-area="Admin">
+                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Agendamento" asp-area="Admin">
                                     <svg class="bi" aria-hidden="true"><use xlink:href="#file-earmark"></use></svg>
-                                    Chamados
+                                    Atendimento
                                 </a>
                             </li>
 
@@ -112,23 +112,23 @@
                         <hr class="my-3"> 
                         <h6 class="fs-6"> Configurações</h6>
                         <ul class="nav flex-column mb-auto">
-                            @if (Context.User.IsInRole(Perfil.Tecnico.ToString())||Context.User.IsInRole(Perfil.Administrador.ToString()))
+                            @if (Context.User.IsInRole(Perfil.Dentista.ToString())||Context.User.IsInRole(Perfil.Atendente.ToString()))
                             {
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Clientes" asp-area="Admin">
+                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Paciente" asp-area="Admin">
                                     <svg class="bi" aria-hidden="true"><use xlink:href="#gear-wide-connected"></use></svg>
                                     Clientes
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Tecnicos" asp-area="Admin">
+                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Dentista" asp-area="Admin">
                                     <svg class="bi" aria-hidden="true"><use xlink:href="#gear-wide-connected"></use></svg>
                                     Técnicos
                                 </a>
                                 </li>
                             }
                           
-                            @if(Context.User.IsInRole(Perfil.Administrador.ToString()))
+                            @if(Context.User.IsInRole(Perfil.Atendente.ToString()))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Usuarios" asp-area="Admin">

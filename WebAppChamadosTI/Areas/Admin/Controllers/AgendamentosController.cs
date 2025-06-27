@@ -14,11 +14,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         BancoDados bd;
         IWebHostEnvironment servidorWeb;
 
-        // public AgendamentosController(IWebHostEnvironment webHostEnvironment)
-        // {
-        //     servidorWeb = webHostEnvironment;
-        // }
-
         public IActionResult Index()
         {
             bd = new BancoDados();
@@ -42,7 +37,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (!string.IsNullOrEmpty(busca))
             {
                 listaAgendamentos = listaAgendamentos
-                    .Where(a => a.DataHora.ToString("dd/MM/yyyy").Contains(busca))
+                    .Where(a => a.Data.ToString("dd/MM/yyyy").Contains(busca))
                     .ToList();
             }
 
@@ -55,7 +50,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             bd = new BancoDados();
             var agendamento = new Agendamento
             {
-                DataHora = DateTime.Now
+                Data = DateTime.Now
             };
 
             ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome");
@@ -75,7 +70,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                model.DataHora = DateTime.Now;
+                model.Data = DateTime.Now;
                 bd.Agendamentos.Add(model);
                 bd.SaveChanges();
 
@@ -117,12 +112,12 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 if (agendamentoExistente == null)
                     return NotFound();
 
-                agendamentoExistente.Motivo = model.Motivo;
-                agendamentoExistente.Observacao = model.Observacao;
-                agendamentoExistente.Valor = model.Valor;
-                agendamentoExistente.PacienteId = model.PacienteId;
-                agendamentoExistente.DentistaId = model.DentistaId;
-                agendamentoExistente.Concluido = model.Concluido;
+                //agendamentoExistente.Motivo = model.Motivo;
+                //agendamentoExistente.Observacao = model.Observacao;
+                //agendamentoExistente.Valor = model.Valor;
+                //agendamentoExistente.PacienteId = model.PacienteId;
+                //agendamentoExistente.DentistaId = model.DentistaId;
+                //agendamentoExistente.Concluido = model.Concluido;
 
                 bd.SaveChanges();
                 return RedirectToAction("Index");

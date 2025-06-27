@@ -8,26 +8,51 @@
 
 <h3>Você tem certeza que deseja excluir este registro?</h3>
 <div>
-    <h4>Tecnico</h4>
+    <h4>Dentista</h4>
     <hr />
     <dl class="row">
+
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Usuario)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.Email)
+        </dd>
+
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Nome)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Nome)
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Especialidade)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Especialidade)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Usuario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Usuario.Email)
+
+        <dd class="col-sm-2">
+            @Html.DisplayFor(model => model.Telefone)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Telefone)
+        </dd>
+
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DataNascimento)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DataNascimento)
+        </dd>
+
+        <dd class="col-sm-2">
+            @Html.DisplayFor(model => model.Endereco)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Endereco)
         </dd>
     </dl>
     

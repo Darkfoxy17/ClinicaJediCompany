@@ -28,7 +28,6 @@
 <form asp-action="Excluir" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="Arquivo" />
     <div class="form-group">
         <input type="submit" value="Excluir" class="btn btn-danger" /> |
         <a asp-action="Index" class="btn btn-secondary">Voltar</a>
