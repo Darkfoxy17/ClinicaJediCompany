@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Administrador, Tecnico, Cliente")]
+    [Authorize(Roles = "Atendente, Dentista, Paciente")]
     public class HomeController : Controller
     {
         public IActionResult Index()

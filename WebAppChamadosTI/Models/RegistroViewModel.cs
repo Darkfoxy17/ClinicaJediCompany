@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAppChamadosTI.Models
 {
@@ -6,7 +7,7 @@ namespace WebAppChamadosTI.Models
     {
         public Guid? Id { get; set; }
 
-        //dados usuario
+        // Dados do usuário
         [Required(ErrorMessage = "Campo e-mail obrigatório")]
         [StringLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
         [DataType(DataType.EmailAddress)]
@@ -21,14 +22,23 @@ namespace WebAppChamadosTI.Models
 
         public Perfil Perfil { get; set; }
 
-        //dados do cliente
-        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        // Dados do paciente
         [Required(ErrorMessage = "Campo nome é obrigatório")]
+        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
         public string Nome { get; set; }
 
-        //dados do tecnico
-        [MaxLength(50, ErrorMessage = "Ultrapassou o máximo permitido")]
-        public string? Especialidade { get; set; }
+        [Required(ErrorMessage = "Campo telefone é obrigatório")]
+        [MaxLength(20, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Telefone { get; set; }
+
+        [Required(ErrorMessage = "Campo data de nascimento é obrigatório")]
+        [MaxLength(15, ErrorMessage = "Ultrapassou o máximo permitido")]
+        [Display(Name = "Data de nascimento")]
+        public string DataNascimento { get; set; }
+
+        [Required(ErrorMessage = "Campo endereço é obrigatório")]
+        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        public string Endereco { get; set; }
 
         public RegistroViewModel()
         {

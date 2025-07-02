@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<WebAppChamadosTI.Models.Paciente>
 
 @{
-    ViewData["Title"] = "Clientes";
+    ViewData["Title"] = "Pacientes";
 }
 
-<h1>Clientes</h1>
+<h1>Pacientes</h1>
 <div class="d-flex justify-content-between">
     <div>
         <a asp-action="Incluir" class="btn btn-success btn-sm">Incluir</a>
@@ -30,9 +30,8 @@
 <table class="table">
     <thead>
         <tr>
-
-            </th>
-            @Html.DisplayNameFor(model => model.Usuario.Email)
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario.Email)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nome)
@@ -54,19 +53,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Usuario.Email)
             </td>
-
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
-
             <td>
                 @Html.DisplayFor(modelItem => item.Telefone)
             </td>
-
             <td>
                 @Html.DisplayFor(modelItem => item.DataNascimento)
             </td>
-
             <td>
                 @Html.DisplayFor(modelItem => item.Endereco)
             </td>

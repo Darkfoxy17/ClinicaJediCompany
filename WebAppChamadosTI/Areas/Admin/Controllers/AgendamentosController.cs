@@ -8,11 +8,10 @@ using WebAppChamadosTI.Models;
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Administrador, Tecnico, Cliente")]
+    [Authorize(Roles = "Atendente")]
     public class AgendamentosController : Controller
     {
         BancoDados bd;
-        IWebHostEnvironment servidorWeb;
 
         public IActionResult Index()
         {
@@ -111,13 +110,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
                 if (agendamentoExistente == null)
                     return NotFound();
-
-                //agendamentoExistente.Motivo = model.Motivo;
-                //agendamentoExistente.Observacao = model.Observacao;
-                //agendamentoExistente.Valor = model.Valor;
-                //agendamentoExistente.PacienteId = model.PacienteId;
-                //agendamentoExistente.DentistaId = model.DentistaId;
-                //agendamentoExistente.Concluido = model.Concluido;
 
                 bd.SaveChanges();
                 return RedirectToAction("Index");

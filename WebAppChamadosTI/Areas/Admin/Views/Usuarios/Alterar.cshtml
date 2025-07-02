@@ -1,37 +1,36 @@
 ﻿@model WebAppChamadosTI.Models.Usuario
-
 @{
-    ViewData["Title"] = "Alterar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Alterar Usuário";
 }
 
-<h1>Alterar</h1>
+<h2>Alterar Usuário</h2>
 
-<h4>Usuario</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Alterar" method="post"
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="Perfil" />
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" readonly />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Senha" class="control-label"></label>
-                <input asp-for="Senha" class="form-control" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
+<form asp-action="Alterar" method="post">
+    <input type="hidden" asp-for="Id" />
 
-            <div class="form-group p-2">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-            </div>
-        </form>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-</div>
+
+    <div class="form-group">
+        <label asp-for="Senha"></label>
+        <input asp-for="Senha" class="form-control" />
+        <span asp-validation-for="Senha" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Perfil</label>
+        <input class="form-control" value="@Model.Perfil.ToString()" readonly />
+    </div>
+
+    <input type="submit" value="Salvar" class="btn btn-primary" />
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
 
 @section Scripts {
     @{

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace WebAppChamadosTI.Models
 {
-    [Table("Clientes")]
+    [Table("Pacientes")]
     public class Paciente
     {
         [Key]

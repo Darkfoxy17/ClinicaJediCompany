@@ -34,7 +34,7 @@ namespace WebAppChamadosTI.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             conexao = @"Server=localhost\SQLExpress;
-    Database=ChamadosTIBd;
+    Database=ClinicaJedi;
     Integrated Security=True;
     TrustServerCertificate=True";
             optionsBuilder.UseSqlServer(conexao);

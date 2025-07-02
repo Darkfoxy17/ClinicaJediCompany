@@ -4,56 +4,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppChamadosTI.Data;
 using WebAppChamadosTI.Models;
-using System.Drawing;
 
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Administrador, Tecnico")]
+    [Authorize(Roles = "Atendente, Dentista")]
     public class DentistasController : Controller
     {
         BancoDados bd;
-        IWebHostEnvironment servidorweb;
 
-        public DentistasController(IWebHostEnvironment webHostEnvironment)
-        {
-            servidorweb = webHostEnvironment;
-        }
-
-        public string SalvarArquivo(IFormFile arquivo)
-        {
-            if (arquivo == null)
-                return string.Empty;
-
-            string extensao = Path.GetExtension(arquivo.FileName).TrimStart('.');
-            string nomeArquivo = $"{Guid.NewGuid()}.{extensao}";
-            string pastaArquivo = Path.Combine(servidorweb.WebRootPath, "uploads");
-            string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
-
-            using (var dadosArquivo = new FileStream(caminhoArquivo, FileMode.Create))
-            {
-                arquivo.CopyTo(dadosArquivo);
-            }
-
-            return nomeArquivo;
-        }
-
-        private bool ExcluirArquivo(string nomeArquivo)
-        {
-            if (string.IsNullOrEmpty(nomeArquivo) || nomeArquivo == "default-user.png")
-                return false;
-
-            string pastaArquivo = Path.Combine(servidorweb.WebRootPath, "uploads");
-            string caminhoArquivo = Path.Combine(pastaArquivo, nomeArquivo);
-
-            if (System.IO.File.Exists(caminhoArquivo))
-            {
-                System.IO.File.Delete(caminhoArquivo);
-                return true;
-            }
-
-            return false;
-        }
+        public DentistasController() { }
 
         [HttpGet]
         public IActionResult Index()
@@ -149,7 +109,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Alterar(Dentista model, IFormFile? arquivo)
+        public IActionResult Alterar(Dentista model)
         {
             bd = new BancoDados();
             if (ModelState.IsValid)
@@ -162,7 +122,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 if (outroDentista == null && paciente == null)
                 {
                     var dentista = bd.Dentistas
-                        .Include(t => t.Usuario)
                         .FirstOrDefault(t => t.Id == model.Id);
 
                     if (dentista == null)
@@ -171,33 +130,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                     dentista.Nome = model.Nome;
                     dentista.UsuarioId = model.UsuarioId;
 
-                    if (arquivo != null)
-                    {
-                        try
-                        {
-                            using (var stream = arquivo.OpenReadStream())
-                            using (var image = Image.FromStream(stream))
-                            {
-                                if (image.Width > 150 || image.Height > 150)
-                                {
-                                    ModelState.AddModelError("Arquivo", "A imagem não pode ter mais que 150x150 pixels.");
-                                    goto RetornaErro;
-                                }
-                            }
-
-                            if (!string.IsNullOrWhiteSpace(dentista.Usuario.Arquivo))
-                                ExcluirArquivo(dentista.Usuario.Arquivo);
-
-                            var nomeArquivo = SalvarArquivo(arquivo);
-                            dentista.Usuario.Arquivo = nomeArquivo;
-                        }
-                        catch
-                        {
-                            ModelState.AddModelError("Arquivo", "Arquivo de imagem inválido.");
-                            goto RetornaErro;
-                        }
-                    }
-
                     bd.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -205,7 +137,6 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 ModelState.AddModelError("UsuarioId", "Este e-mail já está vinculado a outro cadastro!");
             }
 
-        RetornaErro:
             var listaUsuarios = bd.Usuarios.ToList();
             ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", model.UsuarioId);
             return View(model);

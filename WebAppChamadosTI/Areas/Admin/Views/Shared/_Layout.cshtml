@@ -102,9 +102,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Agendamento" asp-area="Admin">
+                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Agendamentos" asp-area="Admin">
                                     <svg class="bi" aria-hidden="true"><use xlink:href="#file-earmark"></use></svg>
-                                    Atendimento
+                                    Agendamento
                                 </a>
                             </li>
 
@@ -115,20 +115,20 @@
                             @if (Context.User.IsInRole(Perfil.Dentista.ToString())||Context.User.IsInRole(Perfil.Atendente.ToString()))
                             {
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Paciente" asp-area="Admin">
+                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Pacientes" asp-area="Admin">
                                     <svg class="bi" aria-hidden="true"><use xlink:href="#gear-wide-connected"></use></svg>
-                                    Clientes
+                                    Pacientes
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Dentista" asp-area="Admin">
+                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Dentistas" asp-area="Admin">
                                     <svg class="bi" aria-hidden="true"><use xlink:href="#gear-wide-connected"></use></svg>
-                                    Técnicos
+                                    Dentistas
                                 </a>
                                 </li>
                             }
                           
-                            @if(Context.User.IsInRole(Perfil.Atendente.ToString()))
+@*                             @if(Context.User.IsInRole(Perfil.Atendente.ToString()))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Usuarios" asp-area="Admin">
@@ -136,7 +136,7 @@
                                         Usuários
                                     </a>
                                 </li>
-                            }
+                            } *@
                             
                            
                             <li class="nav-item">

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using WebAppChamadosTI.Models;
 
+
 namespace WebAppChamadosTI.Controllers
 {
     public class ContaController : Controller
@@ -17,101 +18,58 @@ namespace WebAppChamadosTI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Registrar(string perfil)
+        public IActionResult Registrar()
         {
-            RegistroViewModel viewModel = new RegistroViewModel();
-
-            // Verificar o tipo de registro
-            viewModel.Perfil = perfil == "Tecnico" ? Perfil.Tecnico : Perfil.Cliente;
+            var viewModel = new RegistroViewModel
+            {
+                Perfil = Perfil.Paciente
+            };
 
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Registrar(RegistroViewModel viewModel, IFormFile? arquivo)
+        public IActionResult Registrar(RegistroViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 BancoDados bd = new BancoDados();
 
-                // Verifica se já existe a conta do usuário
-                var usuario = bd.Usuarios.FirstOrDefault(u => u.Email == viewModel.Email);
-                if (usuario != null)
+                var usuarioExistente = bd.Usuarios.FirstOrDefault(u => u.Email == viewModel.Email);
+                if (usuarioExistente != null)
                 {
                     ModelState.AddModelError("Email", "Essa conta já é cadastrada");
                     return View(viewModel);
                 }
 
-                // Inclui o novo usuário
-                usuario = new Usuario
+                var usuario = new Usuario
                 {
                     Email = viewModel.Email,
                     Senha = viewModel.Senha,
-                    Perfil = viewModel.Perfil
+                    Perfil = Perfil.Paciente
                 };
-
-                // Processamento do arquivo de imagem
-                if (arquivo != null && arquivo.Length > 0)
-                {
-                    string nomeArquivo = Guid.NewGuid().ToString() + Path.GetExtension(arquivo.FileName);
-                    string caminho = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", nomeArquivo);
-                    Directory.CreateDirectory(Path.GetDirectoryName(caminho)!);
-
-                    using (var stream = new FileStream(caminho, FileMode.Create))
-                    {
-                        arquivo.CopyTo(stream);
-                    }
-
-                    usuario.Arquivo = nomeArquivo;
-                }
 
                 bd.Usuarios.Add(usuario);
                 bd.SaveChanges();
 
-                // Cliente
-                if (viewModel.Perfil == Perfil.Cliente)
+                var paciente = new Paciente
                 {
-                    if (string.IsNullOrWhiteSpace(viewModel.Profissao))
-                    {
-                        ModelState.AddModelError("Profissao", "O campo profissão é obrigatório");
-                        return View(viewModel);
-                    }
+                    UsuarioId = usuario.Id,
+                    Nome = viewModel.Nome,
+                    Telefone = viewModel.Telefone,
+                    DataNascimento = viewModel.DataNascimento,
+                    Endereco = viewModel.Endereco
+                };
 
-                    Paciente cliente = new Paciente
-                    {
-                        UsuarioId = usuario.Id,
-                        Nome = viewModel.Nome,
-                        Profissao = viewModel.Profissao
-                    };
-                    bd.Clientes.Add(cliente);
-                    bd.SaveChanges();
-                }
-
-                // Técnico
-                if (viewModel.Perfil == Perfil.Tecnico)
-                {
-                    if (string.IsNullOrWhiteSpace(viewModel.Especialidade))
-                    {
-                        ModelState.AddModelError("Especialidade", "O campo especialidade é obrigatório");
-                        return View(viewModel);
-                    }
-
-                    Dentista tecnico = new Dentista
-                    {
-                        UsuarioId = usuario.Id,
-                        Nome = viewModel.Nome,
-                        Especialidade = viewModel.Especialidade
-                    };
-                    bd.Tecnicos.Add(tecnico);
-                    bd.SaveChanges();
-                }
+                bd.Pacientes.Add(paciente);
+                bd.SaveChanges();
 
                 return RedirectToAction("Entrar");
             }
-
             return View(viewModel);
         }
+
 
         [HttpGet]
         public IActionResult Entrar()
@@ -133,20 +91,19 @@ namespace WebAppChamadosTI.Controllers
                     int id;
                     string nome;
 
-                    if (usuario.Perfil == Models.Perfil.Cliente)
+                    if (usuario.Perfil == Models.Perfil.Paciente)
                     {
-                        var cliente = bd.Clientes.FirstOrDefault(c => c.UsuarioId == usuario.Id);
-                        id = cliente.Id;
-                        nome = cliente.Nome;
+                        var paciente = bd.Pacientes.FirstOrDefault(c => c.UsuarioId == usuario.Id);
+                        id = paciente.Id;
+                        nome = paciente.Nome;
                     }
                     else
                     {
-                        var tecnico = bd.Tecnicos.FirstOrDefault(t => t.UsuarioId == usuario.Id);
-                        id = tecnico.Id;
-                        nome = tecnico.Nome;
+                        var dentista = bd.Dentistas.FirstOrDefault(t => t.UsuarioId == usuario.Id);
+                        id = dentista.Id;
+                        nome = dentista.Nome;
                     }
 
-                    // Autenticar o usuário
                     List<Claim> dadosAcesso = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, nome),

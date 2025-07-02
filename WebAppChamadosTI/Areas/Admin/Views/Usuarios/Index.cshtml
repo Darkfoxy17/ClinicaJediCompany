@@ -1,55 +1,40 @@
 ﻿@model IEnumerable<WebAppChamadosTI.Models.Usuario>
 @{
-    ViewData["Title"] = "Usuarios";
+    ViewData["Title"] = "Lista de Usuários";
 }
 
-<h1>Usuarios</h1>
-<div class="d-flex justify-content-between">
-    <div>
-        <a asp-action="Incluir" class="btn btn-success btn-sm">Incluir</a>
+<h2>Lista de Usuários</h2>
+
+<a asp-action="Incluir" class="btn btn-success">Incluir</a>
+
+
+<form method="post" asp-action="Index">
+    <input type="text" name="busca" class="form-control" placeholder="Buscar...">    
+    <div class="form-group p-2">
+        <button type="submit" class="btn btn-primary">Buscar</button>
     </div>
-    <form asp-action="Index" method="post">
-        <div class="row align-items-center">
-            <div class="col-auto">
-                <label>Pesquisa</label>
-            </div>
-            <div class="col-auto">
-                <input type="search" name="busca" id="busca"
-                    class="form-control-sm" />
-            </div>
-            <div class="col-auto">
-                <button type="submit" 
-                    class="btn btn-primary btn-sm">Buscar</button>
-            </div>
-        </div>
-    </form>
-</div>
-<table class="table">
+</form>
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>            
-            <th>
-                @Html.DisplayNameFor(model => model.Perfil)
-            </th>
-            <th></th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Perfil)
-            </td>
-            <td>
-                <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |
-                <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Exibir</a> |
-                <a asp-action="Excluir" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Excluir</a>
-            </td>
-        </tr>}
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.Email</td>
+                <td>@usuario.Perfil.ToString()</td>
+                <td>
+                    <a asp-action="Exibir" asp-route-id="@usuario.Id">Exibir</a> |
+                    <a asp-action="Alterar" asp-route-id="@usuario.Id">Alterar</a> |
+                    <a asp-action="Excluir" asp-route-id="@usuario.Id">Excluir</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

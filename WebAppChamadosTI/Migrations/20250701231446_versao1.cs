@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WebAppChamadosTI.Migrations
+namespace ClinicaJediCompany.Migrations
 {
     /// <inheritdoc />
     public partial class versao1 : Migration
@@ -33,8 +33,9 @@ namespace WebAppChamadosTI.Migrations
                     Senha = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Perfil = table.Column<int>(type: "int", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Profissao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Especialidade = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                    Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    DataNascimento = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,9 +50,7 @@ namespace WebAppChamadosTI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Senha = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Inativo = table.Column<bool>(type: "bit", nullable: false),
-                    Perfil = table.Column<int>(type: "int", nullable: false),
-                    Arquivo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Perfil = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,21 +58,23 @@ namespace WebAppChamadosTI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clientes",
+                name: "Dentistas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Profissao = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Setor = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
+                    Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    DataNascimento = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Especialidade = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                    table.PrimaryKey("PK_Dentistas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Clientes_Usuarios_UsuarioId",
+                        name: "FK_Dentistas_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "Id",
@@ -81,20 +82,22 @@ namespace WebAppChamadosTI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tecnicos",
+                name: "Pacientes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Especialidade = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    DataNascimento = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tecnicos", x => x.Id);
+                    table.PrimaryKey("PK_Pacientes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tecnicos_Usuarios_UsuarioId",
+                        name: "FK_Pacientes_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "Id",
@@ -102,54 +105,53 @@ namespace WebAppChamadosTI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Chamados",
+                name: "Atendimentos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Problema = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Ocorrencia = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    Concluido = table.Column<bool>(type: "bit", nullable: false),
-                    ValorTotal = table.Column<double>(type: "float", nullable: false),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
-                    TecnicoId = table.Column<int>(type: "int", nullable: false)
+                    Data = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Procedimento = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    PacienteId = table.Column<int>(type: "int", nullable: false),
+                    DentistaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chamados", x => x.Id);
+                    table.PrimaryKey("PK_Atendimentos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Chamados_Clientes_ClienteId",
-                        column: x => x.ClienteId,
-                        principalTable: "Clientes",
+                        name: "FK_Atendimentos_Dentistas_DentistaId",
+                        column: x => x.DentistaId,
+                        principalTable: "Dentistas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Chamados_Tecnicos_TecnicoId",
-                        column: x => x.TecnicoId,
-                        principalTable: "Tecnicos",
+                        name: "FK_Atendimentos_Pacientes_PacienteId",
+                        column: x => x.PacienteId,
+                        principalTable: "Pacientes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chamados_ClienteId",
-                table: "Chamados",
-                column: "ClienteId");
+                name: "IX_Atendimentos_DentistaId",
+                table: "Atendimentos",
+                column: "DentistaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chamados_TecnicoId",
-                table: "Chamados",
-                column: "TecnicoId");
+                name: "IX_Atendimentos_PacienteId",
+                table: "Atendimentos",
+                column: "PacienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clientes_UsuarioId",
-                table: "Clientes",
+                name: "IX_Dentistas_UsuarioId",
+                table: "Dentistas",
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tecnicos_UsuarioId",
-                table: "Tecnicos",
+                name: "IX_Pacientes_UsuarioId",
+                table: "Pacientes",
                 column: "UsuarioId");
         }
 
@@ -157,7 +159,7 @@ namespace WebAppChamadosTI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Chamados");
+                name: "Atendimentos");
 
             migrationBuilder.DropTable(
                 name: "ContaViewModel");
@@ -166,10 +168,10 @@ namespace WebAppChamadosTI.Migrations
                 name: "RegistroViewModel");
 
             migrationBuilder.DropTable(
-                name: "Clientes");
+                name: "Dentistas");
 
             migrationBuilder.DropTable(
-                name: "Tecnicos");
+                name: "Pacientes");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

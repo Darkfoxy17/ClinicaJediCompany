@@ -1,29 +1,20 @@
 ﻿@model WebAppChamadosTI.Models.Usuario
-
 @{
-    ViewData["Title"] = "Exibir";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Detalhes do Usuário";
 }
 
-<h1>Detalhes</h1>
+<h2>Detalhes do Usuário</h2>
+
 <div>
-    <h4>Usuario</h4>
-    <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Perfil)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Perfil)
-        </dd>
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+
+        <dt class="col-sm-2">Perfil</dt>
+        <dd class="col-sm-10">@Model.Perfil.ToString()</dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Alterar</a> |
-    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-</div>
+
+<a asp-action="Alterar" asp-route-id="@Model.Id" class="btn btn-primary">Alterar</a>
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>
