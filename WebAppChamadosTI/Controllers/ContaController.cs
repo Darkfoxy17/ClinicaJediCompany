@@ -1,9 +1,11 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
-using WebAppChamadosTI.Data;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using WebAppChamadosTI.Data;
 using WebAppChamadosTI.Models;
+
 
 
 namespace WebAppChamadosTI.Controllers
@@ -79,38 +81,58 @@ namespace WebAppChamadosTI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Entrar(ContaViewModel viewModel)
+        public async Task<IActionResult> Entrar(ContaViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 BancoDados bd = new BancoDados();
-                var usuario = bd.Usuarios.FirstOrDefault(usuario => usuario.Email == viewModel.Email && usuario.Senha == viewModel.Senha);
+                var usuario = bd.Usuarios.FirstOrDefault(u =>
+                    u.Email == viewModel.Email && u.Senha == viewModel.Senha);
 
                 if (usuario != null)
                 {
-                    int id;
-                    string nome;
+                    int id = 0;
+                    string nome = string.Empty;
+                    bool cadastroValido = false;
 
-                    if (usuario.Perfil == Models.Perfil.Paciente)
+                    switch (usuario.Perfil)
                     {
-                        var paciente = bd.Pacientes.FirstOrDefault(c => c.UsuarioId == usuario.Id);
-                        id = paciente.Id;
-                        nome = paciente.Nome;
-                    }
-                    else
-                    {
-                        var dentista = bd.Dentistas.FirstOrDefault(t => t.UsuarioId == usuario.Id);
-                        id = dentista.Id;
-                        nome = dentista.Nome;
+                        case Perfil.Paciente:
+                            var paciente = bd.Pacientes.FirstOrDefault(c => c.UsuarioId == usuario.Id);
+                            if (paciente != null)
+                            {
+                                id = paciente.Id;
+                                nome = paciente.Nome;
+                                cadastroValido = true;
+                            }
+                            break;
+
+                        case Perfil.Dentista:
+                        case Perfil.Atendente: // Atendente também está na tabela Dentistas
+                            var dentista = bd.Dentistas.FirstOrDefault(d => d.UsuarioId == usuario.Id);
+                            if (dentista != null)
+                            {
+                                id = dentista.Id;
+                                nome = dentista.Nome;
+                                cadastroValido = true;
+                            }
+                            break;
                     }
 
+                    if (!cadastroValido)
+                    {
+                        ModelState.AddModelError("", "Cadastro não encontrado para o perfil informado.");
+                        return View(viewModel);
+                    }
+
+                    // Autenticação
                     List<Claim> dadosAcesso = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, nome),
-                        new Claim(ClaimTypes.Email, usuario.Email),
-                        new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-                        new Claim(ClaimTypes.Role, usuario.Perfil.ToString())
-                    };
+            {
+                new Claim(ClaimTypes.Name, usuario.Email),
+                new Claim(ClaimTypes.Email, usuario.Email),
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                new Claim(ClaimTypes.Role, usuario.Perfil.ToString())
+            };
 
                     ClaimsIdentity identidadeAcesso = new ClaimsIdentity(dadosAcesso, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -123,17 +145,60 @@ namespace WebAppChamadosTI.Controllers
                     };
 
                     ClaimsPrincipal autorizacaoAcesso = new ClaimsPrincipal(identidadeAcesso);
-                    HttpContext.SignInAsync(autorizacaoAcesso, cookieAutenticacao);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, autorizacaoAcesso, cookieAutenticacao);
 
                     return RedirectToAction("Index", "Home", new { area = "Admin" });
                 }
-                else
-                {
-                    ModelState.AddModelError("Senha", "Usuário ou senha inválidos");
-                }
+
+                ModelState.AddModelError("Senha", "Usuário ou senha inválidos");
             }
 
             return View(viewModel);
         }
+
+
+
+        [Authorize]
+    [HttpGet]
+    public IActionResult AlterarSenha()
+    {
+        return View();
     }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult AlterarSenha(AlterarSenhaViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            BancoDados bd = new BancoDados();
+
+            string emailUsuario = User.Identity.Name;
+
+            var usuario = bd.Usuarios.FirstOrDefault(u => u.Email == emailUsuario);
+
+            if (usuario == null)
+            {
+                return Unauthorized();
+            }
+
+            if (usuario.Senha != viewModel.SenhaAtual)
+            {
+                ModelState.AddModelError("SenhaAtual", "A senha atual está incorreta.");
+                return View(viewModel);
+            }
+
+            usuario.Senha = viewModel.NovaSenha;
+            bd.SaveChanges();
+
+            TempData["Mensagem"] = "Senha alterada com sucesso!";
+            return RedirectToAction("Index", "Home");
+        }
+
+        return View(viewModel);
+    }
+
+
+}
 }

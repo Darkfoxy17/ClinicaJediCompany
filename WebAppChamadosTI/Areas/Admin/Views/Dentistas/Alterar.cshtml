@@ -1,65 +1,66 @@
 ﻿@model WebAppChamadosTI.Models.Dentista
-
 @{
-    ViewData["Title"] = "Alterar";
+    ViewData["Title"] = "Editar Dentista";
+    bool isAtendente = User.IsInRole("Atendente");
+    var usuarioLogadoId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+    bool ehMesmoUsuario = usuarioLogadoId == Model.Id;
 }
 
-<h1>Alterar</h1>
+<h2>Editar Dentista</h2>
 
-<h4>Dentista</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Alterar">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+<form asp-action="Alterar" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Usuario" class="control-label">Usuário</label>
-                <select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.Usuarios"></select>
-                <span asp-validation-for="UsuarioId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Especialidade" class="control-label"></label>
-                <input asp-for="Especialidade" class="form-control" />
-                <span asp-validation-for="Especialidade" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DataNascimento" class="control-label"></label>
-                <input asp-for="DataNascimento" class="form-control" />
-                <span asp-validation-for="DataNascimento" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Telefone" class="control-label"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Endereco" class="control-label"></label>
-                <input asp-for="Endereco" class="form-control" />
-                <span asp-validation-for="Endereco" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-3">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    @if (isAtendente)
+    {
+        <div class="form-group">
+            <label>Vincular ao usuário</label>
+            <select asp-for="UsuarioId" asp-items="ViewBag.Usuarios" class="form-control"></select>
+            <span asp-validation-for="UsuarioId" class="text-danger"></span>
+        </div>
     }
-}
+
+    <div class="form-group">
+        <label asp-for="Nome"></label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Especialidade"></label>
+        <input asp-for="Especialidade" class="form-control" />
+        <span asp-validation-for="Especialidade" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Telefone"></label>
+        <input asp-for="Telefone" class="form-control" />
+        <span asp-validation-for="Telefone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DataNascimento"></label>
+        <input asp-for="DataNascimento" class="form-control" type="date" />
+        <span asp-validation-for="DataNascimento" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Endereco"></label>
+        <input asp-for="Endereco" class="form-control" />
+        <span asp-validation-for="Endereco" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+
+    @if (ehMesmoUsuario)
+    {
+        <div class="mt-3">
+            <a class="btn btn-warning" asp-area="" asp-controller="Conta" asp-action="AlterarSenha">
+                🔐 Alterar minha senha
+            </a>
+
+        </div>
+    }
+</form>

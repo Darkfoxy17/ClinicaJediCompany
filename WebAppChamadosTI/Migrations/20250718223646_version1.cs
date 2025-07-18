@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClinicaJediCompany.Migrations
 {
     /// <inheritdoc />
-    public partial class versao1 : Migration
+    public partial class version1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,7 @@ namespace ClinicaJediCompany.Migrations
                     Perfil = table.Column<int>(type: "int", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    DataNascimento = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Endereco = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
@@ -65,7 +65,7 @@ namespace ClinicaJediCompany.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    DataNascimento = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Endereco = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Especialidade = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
@@ -89,7 +89,7 @@ namespace ClinicaJediCompany.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    DataNascimento = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Endereco = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },

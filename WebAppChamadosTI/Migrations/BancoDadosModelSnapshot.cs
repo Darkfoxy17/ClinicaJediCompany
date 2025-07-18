@@ -91,10 +91,8 @@ namespace ClinicaJediCompany.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DataNascimento")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<DateTime>("DataNascimento")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Endereco")
                         .IsRequired()
@@ -134,10 +132,8 @@ namespace ClinicaJediCompany.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DataNascimento")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<DateTime>("DataNascimento")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Endereco")
                         .IsRequired()
@@ -170,10 +166,8 @@ namespace ClinicaJediCompany.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DataNascimento")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<DateTime>("DataNascimento")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()

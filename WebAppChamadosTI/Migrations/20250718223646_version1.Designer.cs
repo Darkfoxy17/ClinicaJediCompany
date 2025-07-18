@@ -12,8 +12,8 @@ using WebAppChamadosTI.Data;
 namespace ClinicaJediCompany.Migrations
 {
     [DbContext(typeof(BancoDados))]
-    [Migration("20250701231446_versao1")]
-    partial class versao1
+    [Migration("20250718223646_version1")]
+    partial class version1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,10 +94,8 @@ namespace ClinicaJediCompany.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DataNascimento")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<DateTime>("DataNascimento")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Endereco")
                         .IsRequired()
@@ -137,10 +135,8 @@ namespace ClinicaJediCompany.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DataNascimento")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<DateTime>("DataNascimento")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Endereco")
                         .IsRequired()
@@ -173,10 +169,8 @@ namespace ClinicaJediCompany.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DataNascimento")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<DateTime>("DataNascimento")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()

@@ -1,77 +1,49 @@
-﻿@model IEnumerable<WebAppChamadosTI.Models.Paciente>
+﻿@model List<WebAppChamadosTI.Models.Paciente>
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Pacientes";
+    ViewBag.Title = "Lista de Pacientes";
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 }
 
-<h1>Pacientes</h1>
-<div class="d-flex justify-content-between">
-    <div>
-        <a asp-action="Incluir" class="btn btn-success btn-sm">Incluir</a>
-    </div>
-    <form asp-action="Index" method="post">
-        <div class="row align-items-center">
-            <div class="col-auto">
-                <label>Pesquisa</label>
-            </div>
-            <div class="col-auto">
-                <input type="search" name="busca" id="busca"
-                       class="form-control-sm" />
-            </div>
-            <div class="col-auto">
-                <button type="submit"
-                        class="btn btn-primary btn-sm">
-                    Buscar
-                </button>
-            </div>
-        </div>
+<h2>Pacientes</h2>
+
+@if (userRole == "Atendente")
+{
+    <form method="post">
+        <input type="text" name="busca" placeholder="Buscar por nome ou e-mail..." class="form-control mb-2" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
-</div>
-<table class="table">
+}
+
+<table class="table table-striped mt-3">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Usuario.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataNascimento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Endereco)
-            </th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Usuario.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telefone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataNascimento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Endereco)
-            </td>
+        @foreach (var paciente in Model)
+        {
+            <tr>
+                <td>@paciente.Nome</td>
+                <td>@paciente.Usuario?.Email</td>
+                <td>
+                    <a href="@Url.Action("Exibir", new { id = paciente.Id })" class="btn btn-info btn-sm">Exibir</a>
 
-            <td>
-                    <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |
-                    <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Exibir</a> |
-                    <a asp-action="Excluir" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Excluir</a>
-            </td>
-        </tr>
-}
+                    @if (userRole == "Atendente" || userRole == "Administrador" || userRole == "Paciente")
+                    {
+                        <a href="@Url.Action("Alterar", new { id = paciente.Id })" class="btn btn-warning btn-sm">Alterar</a>
+                    }
+
+                    @if (userRole == "Atendente" || userRole == "Administrador")
+                    {
+                        <a href="@Url.Action("Excluir", new { id = paciente.Id })" class="btn btn-danger btn-sm">Excluir</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

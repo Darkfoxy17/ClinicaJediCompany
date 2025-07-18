@@ -1,53 +1,26 @@
 ﻿@model WebAppChamadosTI.Models.Paciente
 
 @{
-    ViewData["Title"] = "Exibir";
+    ViewBag.Title = "Detalhes do Paciente";
 }
 
-<h1>Detalhes</h1>
+<h2>Paciente</h2>
 
-<div>
-    <h4>Paciente</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Usuario)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Usuario.Email)
-        </dd>
+<dl class="row">
+    <dt class="col-sm-2">Nome</dt>
+    <dd class="col-sm-10">@Model.Nome</dd>
 
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+    <dt class="col-sm-2">E-mail</dt>
+    <dd class="col-sm-10">@Model.Usuario?.Email</dd>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Telefone)
-        </dd>
+    <dt class="col-sm-2">Telefone</dt>
+    <dd class="col-sm-10">@Model.Telefone</dd>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
+    <dt class="col-sm-2">Data de Nascimento</dt>
+    <dd class="col-sm-10">@Model.DataNascimento.ToShortDateString()</dd>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Endereco)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Endereco)
-        </dd>
+    <dt class="col-sm-2">Endereço</dt>
+    <dd class="col-sm-10">@Model.Endereco</dd>
+</dl>
 
-    </dl>
-</div>
-<div>
-    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Alterar</a> |
-    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-</div>
+<a class="btn btn-secondary" href="@Url.Action("Index")">Voltar</a>

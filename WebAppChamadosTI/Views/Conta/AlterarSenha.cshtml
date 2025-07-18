@@ -1,0 +1,38 @@
+﻿@model WebAppChamadosTI.Models.AlterarSenhaViewModel
+
+@{
+    ViewData["Title"] = "Alterar Senha";
+}
+
+<h2>Alterar Senha</h2>
+
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert alert-success">@TempData["Senha alterada com sucesso!"]</div>
+}
+
+<form asp-action="AlterarSenha" method="post">
+    <div class="form-group">
+        <label asp-for="SenhaAtual"></label>
+        <input asp-for="SenhaAtual" class="form-control" type="password" />
+        <span asp-validation-for="SenhaAtual" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="NovaSenha"></label>
+        <input asp-for="NovaSenha" class="form-control" type="password" />
+        <span asp-validation-for="NovaSenha" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ConfirmarNovaSenha"></label>
+        <input asp-for="ConfirmarNovaSenha" class="form-control" type="password" />
+        <span asp-validation-for="ConfirmarNovaSenha" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

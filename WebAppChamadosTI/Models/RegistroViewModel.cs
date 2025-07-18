@@ -32,9 +32,8 @@ namespace WebAppChamadosTI.Models
         public string Telefone { get; set; }
 
         [Required(ErrorMessage = "Campo data de nascimento é obrigatório")]
-        [MaxLength(15, ErrorMessage = "Ultrapassou o máximo permitido")]
         [Display(Name = "Data de nascimento")]
-        public string DataNascimento { get; set; }
+        public DateTime DataNascimento { get; set; }
 
         [Required(ErrorMessage = "Campo endereço é obrigatório")]
         [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
