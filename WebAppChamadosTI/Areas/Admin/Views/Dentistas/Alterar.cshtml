@@ -1,25 +1,15 @@
-﻿@model WebAppChamadosTI.Models.Dentista
+﻿@model WebAppChamadosTI.Models.DentistaViewModel
+
 @{
-    ViewData["Title"] = "Editar Dentista";
+    ViewData["Title"] = "Alterar Dentista";
     bool isAtendente = User.IsInRole("Atendente");
     var usuarioLogadoId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-    bool ehMesmoUsuario = usuarioLogadoId == Model.Id;
 }
 
-<h2>Editar Dentista</h2>
+<h2>Dados do Dentista</h2>
 
 <form asp-action="Alterar" method="post">
-    <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    @if (isAtendente)
-    {
-        <div class="form-group">
-            <label>Vincular ao usuário</label>
-            <select asp-for="UsuarioId" asp-items="ViewBag.Usuarios" class="form-control"></select>
-            <span asp-validation-for="UsuarioId" class="text-danger"></span>
-        </div>
-    }
 
     <div class="form-group">
         <label asp-for="Nome"></label>
@@ -27,11 +17,6 @@
         <span asp-validation-for="Nome" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Especialidade"></label>
-        <input asp-for="Especialidade" class="form-control" />
-        <span asp-validation-for="Especialidade" class="text-danger"></span>
-    </div>
 
     <div class="form-group">
         <label asp-for="Telefone"></label>
@@ -40,27 +25,32 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="DataNascimento"></label>
+        <label asp-for="DataNascimento">Data de Nascimento</label>
         <input asp-for="DataNascimento" class="form-control" type="date" />
         <span asp-validation-for="DataNascimento" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Endereco"></label>
+        <label asp-for="Endereco">Endereço</label>
         <input asp-for="Endereco" class="form-control" />
         <span asp-validation-for="Endereco" class="text-danger"></span>
     </div>
 
+@*     <div class="form-group">
+        <label>Procedimentos</label>
+        @foreach (var procedimento in Model.ProcedimentosDisponiveis)
+        {
+            <div class="form-check">
+                <input type="checkbox"
+                       class="form-check-input"
+                       name="ProcedimentosIds"
+                       value="@procedimento.Value"
+                       @(Model.ProcedimentosIds.Contains(int.Parse(procedimento.Value)) ? "checked" : "") />
+                <label class="form-check-label">@procedimento.Text</label>
+            </div>
+        }
+    </div> *@
+
     <button type="submit" class="btn btn-success">Salvar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-
-    @if (ehMesmoUsuario)
-    {
-        <div class="mt-3">
-            <a class="btn btn-warning" asp-area="" asp-controller="Conta" asp-action="AlterarSenha">
-                🔐 Alterar minha senha
-            </a>
-
-        </div>
-    }
 </form>

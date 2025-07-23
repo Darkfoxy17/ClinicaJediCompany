@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebAppChamadosTI.Models
 {
@@ -12,13 +13,21 @@ namespace WebAppChamadosTI.Models
         public string Telefone { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime DataNascimento { get; set; }
 
         [Required]
         public string Endereco { get; set; }
 
-        [Required]
-        public string Especialidade { get; set; }
+        // Substituído: [Required] public string Especialidade { get; set; }
+
+        // Especialização selecionada
+        [Required(ErrorMessage = "Selecione uma especialização.")]
+        [Display(Name = "Especialização")]
+        public int EspecializacaoId { get; set; }
+
+        // Lista para o dropdown
+        public List<SelectListItem> EspecializacoesDisponiveis { get; set; } = new();
 
         // Dados do Usuário
         [Required]
@@ -26,7 +35,11 @@ namespace WebAppChamadosTI.Models
         public string Email { get; set; }
 
         [Required]
-        [MinLength(8)]
+        [MinLength(8, ErrorMessage = "A senha deve ter pelo menos 8 caracteres.")]
         public string Senha { get; set; }
+
+        // Procedimentos vinculados (futuramente)
+        public List<int> ProcedimentosIds { get; set; } = new();
+        public List<SelectListItem> ProcedimentosDisponiveis { get; set; } = new();
     }
 }

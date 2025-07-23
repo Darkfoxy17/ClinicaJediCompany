@@ -13,33 +13,39 @@ namespace WebAppChamadosTI.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Campo obrigatório")]
-        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        [MaxLength(100)]
         public string Nome { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
-        [MaxLength(20, ErrorMessage = "Ultrapassou o máximo permitido")]
+        [Required]
+        [MaxLength(20)]
         public string Telefone { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
+        [Required]
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
-        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        [Required]
+        [MaxLength(100)]
         public string Endereco { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
-        [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
-        public string Especialidade { get; set; }
-
-        //Fks
         public int UsuarioId { get; set; }
         [ForeignKey(nameof(UsuarioId))]
         [ValidateNever]
         public virtual Usuario Usuario { get; set; }
 
-        //Relacionamento
         [ValidateNever]
         public virtual ICollection<Agendamento> Agendamentos { get; set; }
+
+        // NOVO
+        [ValidateNever]
+        public virtual ICollection<DentistaProcedimento> DentistaProcedimentos { get; set; }
+        public ICollection<Procedimento> Procedimentos { get; set; } = new List<Procedimento>();
+
+        public int EspecializacaoId { get; set; }
+
+        [ForeignKey("EspecializacaoId")]
+        public virtual Especializacao Especializacao { get; set; }
+
     }
+
 }

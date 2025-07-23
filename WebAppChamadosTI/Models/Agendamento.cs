@@ -15,23 +15,23 @@ namespace WebAppChamadosTI.Models
 
         [Required(ErrorMessage = "Campo obrigatório")]
         [DataType(DataType.DateTime, ErrorMessage = "Formato de data inválida")]
-        [Display(Name = "Data de solicitação")]
+        [Display(Name = "Data")]
         public DateTime Data { get; set; }
-
-        [Required(ErrorMessage = "Campo obrigatório")]
-        [StringLength(1000, ErrorMessage = "Ultrapassou o máximo permitido")]
-        [DataType(DataType.MultilineText)]
-        public string Procedimento { get; set; }
-
-        [Required(ErrorMessage = "Campo obrigatório")]
-        [StringLength(1000, ErrorMessage = "Ultrapassou o máximo permitido")]
-        [DataType(DataType.MultilineText)]
-        public string Descricao { get; set; }
+        public int ProcedimentoId { get; set; }
+        [ForeignKey(nameof(ProcedimentoId))]
+        [ValidateNever]
+        public Procedimento Procedimento { get; set; }
 
         [StringLength(1000, ErrorMessage = "Ultrapassou o máximo permitido")]
         [DataType(DataType.MultilineText)]
+        [Display(Name = "Observação")]
+        public string? Descricao { get; set; }
+
+        public int StatusAgendamentoId { get; set; }
+        [ForeignKey(nameof(StatusAgendamentoId))]
         [Display(Name = "Status")]
-        public string? Status { get; set; }
+        [ValidateNever]
+        public StatusAgendamento StatusAgendamento { get; set; }
 
         //Fks
         //1

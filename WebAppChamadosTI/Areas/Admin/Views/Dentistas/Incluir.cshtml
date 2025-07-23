@@ -15,9 +15,11 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Especialidade"></label>
-        <input asp-for="Especialidade" class="form-control" />
-        <span asp-validation-for="Especialidade" class="text-danger"></span>
+        <label asp-for="EspecializacaoId" class="control-label">Especialização</label>
+        <select asp-for="EspecializacaoId" class="form-control" asp-items="Model.EspecializacoesDisponiveis">
+            <option value="">Selecione uma especialização</option>
+        </select>
+        <span asp-validation-for="EspecializacaoId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -33,7 +35,7 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Endereco"></label>
+        <label asp-for="Endereco">Endereço</label>
         <input asp-for="Endereco" class="form-control" />
         <span asp-validation-for="Endereco" class="text-danger"></span>
     </div>

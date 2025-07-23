@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Chamados</h1>
+<h1>Agendamento</h1>
 
 <p>
-    <a asp-action="Incluir" class="btn btn-success btn-sm">Incluir</a>
+    <a asp-action="Incluir" class="btn btn-success btn-sm">Novo Agendamento</a>
 </p>
 <table class="table">
     <thead>
@@ -25,10 +25,10 @@
                 @Html.DisplayNameFor(model => model.Data)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                @Html.DisplayNameFor(model => model.Descricao)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Descricao)
+                @Html.DisplayNameFor(model => model.StatusAgendamento)
             </th>
         </tr>
     </thead>
@@ -47,13 +47,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Data)
             </td>
-
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @Html.DisplayFor(modelItem => item.Descricao)
             </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Descricao)
-                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusAgendamento)
+            </td>
+
 
             <td>
                     <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |

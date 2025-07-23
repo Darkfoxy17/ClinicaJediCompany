@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Alterar Paciente";
+    bool isAtendente = User.IsInRole("Atendente");
     var usuarioLogadoId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
     bool ehMesmoUsuario = usuarioLogadoId == Model.Id;
 }
@@ -9,7 +10,10 @@
 <h2>Alterar Paciente</h2>
 
 <form asp-action="Alterar" method="post">
+    @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
+
+    @* Campo de e-mail (UsuarioId) removido *@
 
     <div class="form-group">
         <label asp-for="Nome"></label>
@@ -38,19 +42,16 @@
     <button type="submit" class="btn btn-primary">Salvar</button>
     <a class="btn btn-secondary" href="@Url.Action("Index")">Cancelar</a>
 
-    @if (ehMesmoUsuario)
-        {
-            <div class="mt-3">
-                <a class="btn btn-warning" asp-controller="Conta" asp-action="AlterarSenha" asp-area="">
-                    🔐 Alterar minha senha
-                </a>
-            </div>
-        }
-
+    @if (ehMesmoUsuario && !isAtendente)
+    {
+        <div class="mt-3">
+            <a class="btn btn-warning" asp-controller="Conta" asp-action="AlterarSenha">
+                🔐 Alterar minha senha
+            </a>
+        </div>
+    }
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

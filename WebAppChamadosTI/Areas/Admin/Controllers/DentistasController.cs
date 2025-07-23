@@ -9,6 +9,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class DentistasController : Controller
+
     {
         BancoDados bd;
 
@@ -47,7 +48,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             var listaDentistas = bd.Dentistas
                 .Include(u => u.Usuario)
-                .Where(d => d.Usuario.Perfil != Perfil.Atendente) // Oculta os que têm perfil Atendente
+                .Where(d => d.Usuario.Perfil != Perfil.Atendente)
                 .ToList();
 
             ViewBag.NomeUsuario = usuarioLogado.Email;
@@ -106,54 +107,89 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (!User.IsInRole("Atendente"))
                 return RedirectToAction("AcessoNegado", "Home", new { area = "" });
 
-            return View(new DentistaViewModel());
+            bd = new BancoDados();
+
+            var model = new DentistaViewModel
+            {
+                EspecializacoesDisponiveis = bd.Especializacoes
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.Id.ToString(),
+                        Text = e.Nome
+                    })
+                    .ToList()
+            };
+
+            return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Incluir(DentistaViewModel model)
         {
-            bd = new BancoDados();
-            var usuarioLogado = ObterUsuarioLogado();
-
             if (!User.IsInRole("Atendente"))
                 return RedirectToAction("AcessoNegado", "Home", new { area = "" });
 
-            if (ModelState.IsValid)
+            using var bd = new BancoDados();
+
+            if (!ModelState.IsValid)
             {
-                var usuarioExistente = bd.Usuarios.FirstOrDefault(u => u.Email == model.Email);
-                if (usuarioExistente != null)
-                {
-                    ModelState.AddModelError("Email", "Este e-mail já está em uso.");
-                    return View(model);
-                }
+                // Recarrega especializações para o dropdown
+                model.EspecializacoesDisponiveis = bd.Especializacoes
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.Id.ToString(),
+                        Text = e.Nome
+                    })
+                    .ToList();
 
-                var novoUsuario = new Usuario
-                {
-                    Email = model.Email,
-                    Senha = model.Senha,
-                    Perfil = Perfil.Dentista
-                };
-                bd.Usuarios.Add(novoUsuario);
-                bd.SaveChanges();
-
-                var novoDentista = new Dentista
-                {
-                    Nome = model.Nome,
-                    Telefone = model.Telefone,
-                    DataNascimento = model.DataNascimento,
-                    Endereco = model.Endereco,
-                    Especialidade = model.Especialidade,
-                    UsuarioId = novoUsuario.Id
-                };
-                bd.Dentistas.Add(novoDentista);
-                bd.SaveChanges();
-
-                return RedirectToAction("Index");
+                return View(model);
             }
+            var usuario = new Usuario
+            {
+                Email = model.Email,
+                Senha = model.Senha,
+                Perfil = Perfil.Dentista
 
-            return View(model);
+            };
+            bd.Usuarios.Add(usuario);
+            bd.SaveChanges();
+
+            var dentista = new Dentista
+            {
+                Nome = model.Nome,
+                Telefone = model.Telefone,
+                DataNascimento = model.DataNascimento,
+                Endereco = model.Endereco,
+                UsuarioId = usuario.Id,
+                EspecializacaoId = model.EspecializacaoId
+            };
+            bd.Dentistas.Add(dentista);
+            bd.SaveChanges();
+
+            var procedimentos = bd.EspecializacoesProcedimentos
+                .Where(ep => ep.EspecializacaoId == model.EspecializacaoId)
+                .Select(ep => ep.ProcedimentoId)
+                .ToList();
+
+            // 4. Associa os procedimentos ao dentista
+            foreach (var procedimentoId in procedimentos)
+            {
+                bd.DentistaProcedimentos.Add(new DentistaProcedimento
+                {
+                    DentistaId = dentista.Id,
+                    ProcedimentoId = procedimentoId
+                });
+            }
+            bd.SaveChanges();
+
+            return RedirectToAction("Index");
         }
+
+
+
+
 
         [HttpGet]
         public IActionResult Alterar(int id)
@@ -161,6 +197,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             bd = new BancoDados();
             var dentista = bd.Dentistas
                 .Include(t => t.Usuario)
+                .Include(t => t.DentistaProcedimentos)
                 .FirstOrDefault(t => t.Id == id);
 
             if (dentista == null || dentista.Usuario.Perfil == Perfil.Atendente)
@@ -174,24 +211,35 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (usuarioLogado.Perfil == Perfil.Dentista && dentista.UsuarioId != usuarioLogado.Id)
                 return RedirectToAction("AcessoNegado", "Home", new { area = "" });
 
-            if (usuarioLogado.Perfil == Perfil.Atendente)
-            {
-                var listaUsuarios = bd.Usuarios
-                    .Where(u => u.Perfil != Perfil.Atendente)
-                    .ToList();
-                ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", dentista.UsuarioId);
-            }
+            var procedimentos = bd.Procedimentos
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Nome
+                }).ToList();
 
-            return View(dentista);
+            var viewModel = new DentistaViewModel
+            {
+                Nome = dentista.Nome,
+                Telefone = dentista.Telefone,
+                DataNascimento = dentista.DataNascimento,
+                Endereco = dentista.Endereco,
+                ProcedimentosIds = dentista.DentistaProcedimentos.Select(dp => dp.ProcedimentoId).ToList(),
+                ProcedimentosDisponiveis = procedimentos
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Alterar(Dentista model)
+        public IActionResult Alterar(int id, DentistaViewModel model)
         {
             bd = new BancoDados();
             var usuarioLogado = ObterUsuarioLogado();
-            var dentista = bd.Dentistas.FirstOrDefault(t => t.Id == model.Id);
+            var dentista = bd.Dentistas
+                .Include(d => d.DentistaProcedimentos)
+                .FirstOrDefault(t => t.Id == id);
 
             if (dentista == null || bd.Usuarios.FirstOrDefault(u => u.Id == dentista.UsuarioId)?.Perfil == Perfil.Atendente)
                 return NotFound();
@@ -202,47 +250,54 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (usuarioLogado.Perfil == Perfil.Dentista && dentista.UsuarioId != usuarioLogado.Id)
                 return RedirectToAction("AcessoNegado", "Home", new { area = "" });
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (usuarioLogado.Perfil == Perfil.Atendente)
-                {
-                    var outroDentista = bd.Dentistas
-                        .FirstOrDefault(t => t.UsuarioId == model.UsuarioId && t.Id != model.Id);
-                    var paciente = bd.Pacientes
-                        .FirstOrDefault(c => c.UsuarioId == model.UsuarioId);
-
-                    if (outroDentista != null || paciente != null)
+                model.ProcedimentosDisponiveis = bd.Procedimentos
+                    .Select(p => new SelectListItem
                     {
-                        ModelState.AddModelError("UsuarioId", "Este e-mail já está vinculado a outro cadastro!");
-                        var listaUsuarios = bd.Usuarios
-                            .Where(u => u.Perfil != Perfil.Atendente)
-                            .ToList();
-                        ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", model.UsuarioId);
-                        return View(model);
-                    }
-
-                    dentista.UsuarioId = model.UsuarioId;
-                }
-
-                dentista.Nome = model.Nome;
-                dentista.Especialidade = model.Especialidade;
-                dentista.Telefone = model.Telefone;
-                dentista.DataNascimento = model.DataNascimento;
-                dentista.Endereco = model.Endereco;
-
-                bd.SaveChanges();
-                return RedirectToAction("Index");
+                        Value = p.Id.ToString(),
+                        Text = p.Nome
+                    }).ToList();
+                return View(model);
             }
 
             if (usuarioLogado.Perfil == Perfil.Atendente)
             {
-                var listaUsuarios = bd.Usuarios
-                    .Where(u => u.Perfil != Perfil.Atendente)
-                    .ToList();
-                ViewBag.Usuarios = new SelectList(listaUsuarios, "Id", "Email", model.UsuarioId);
+                var outroDentista = bd.Dentistas
+                    .FirstOrDefault(t => t.UsuarioId == dentista.UsuarioId && t.Id != dentista.Id);
+                var paciente = bd.Pacientes
+                    .FirstOrDefault(c => c.UsuarioId == dentista.UsuarioId);
+
+                if (outroDentista != null || paciente != null)
+                {
+                    ModelState.AddModelError("UsuarioId", "Este e-mail já está vinculado a outro cadastro!");
+                    model.ProcedimentosDisponiveis = bd.Procedimentos
+                        .Select(p => new SelectListItem
+                        {
+                            Value = p.Id.ToString(),
+                            Text = p.Nome
+                        }).ToList();
+                    return View(model);
+                }
             }
 
-            return View(model);
+            dentista.Nome = model.Nome;
+            dentista.Telefone = model.Telefone;
+            dentista.DataNascimento = model.DataNascimento;
+            dentista.Endereco = model.Endereco;
+
+            dentista.DentistaProcedimentos.Clear();
+            foreach (var procedimentoId in model.ProcedimentosIds)
+            {
+                dentista.DentistaProcedimentos.Add(new DentistaProcedimento
+                {
+                    DentistaId = dentista.Id,
+                    ProcedimentoId = procedimentoId
+                });
+            }
+
+            bd.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -302,5 +357,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             bd.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
     }
 }

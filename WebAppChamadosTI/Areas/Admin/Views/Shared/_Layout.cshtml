@@ -101,12 +101,16 @@
                                     Home
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Agendamentos" asp-area="Admin">
-                                    <svg class="bi" aria-hidden="true"><use xlink:href="#file-earmark"></use></svg>
-                                    Agendamento
-                                </a>
-                            </li>
+                            @if (Context.User.IsInRole(Perfil.Atendente.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center gap-2" asp-action="Index" asp-controller="Agendamentos" asp-area="Admin">
+                                        <svg class="bi" aria-hidden="true"><use xlink:href="#file-earmark"></use></svg>
+                                        Agendamento
+                                    </a>
+                                </li>
+                            }
+
 
                         </ul>
                         <hr class="my-3"> 

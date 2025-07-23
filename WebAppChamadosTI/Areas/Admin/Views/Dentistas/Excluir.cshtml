@@ -1,14 +1,17 @@
 ﻿@model WebAppChamadosTI.Models.Dentista
+
 @{
     ViewData["Title"] = "Excluir Dentista";
 }
 
-<h2>Excluir Dentista</h2>
+<h2>Confirmação de Exclusão</h2>
 
-<p>Tem certeza que deseja excluir o dentista <strong>@Model.Nome</strong> com email <strong>@Model.Usuario.Email</strong>?</p>
+<div class="alert alert-danger">
+    Tem certeza que deseja excluir o dentista <strong>@Model.Nome</strong>
+</div>
 
 <form asp-action="Excluir" method="post">
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+    <button type="submit" class="btn btn-danger">Excluir</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
