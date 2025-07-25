@@ -4,46 +4,58 @@
 @{
     ViewBag.Title = "Lista de Pacientes";
     var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+    var tituloPagina = userRole == "Paciente" ? "Configurações" : "Pacientes";
 }
 
-<h2>Pacientes</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">@tituloPagina</h2>
 
-@if (userRole == "Atendente")
-{
-    <form method="post">
-        <input type="text" name="busca" placeholder="Buscar por nome ou e-mail..." class="form-control mb-2" />
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
-}
+    @if (ViewBag.MostrarBusca == true)
+    {
+        <form method="post" class="mb-4">
+            <div class="input-group" style="max-width: 500px;">
+                <input type="text" name="busca" placeholder="Buscar por nome ou e-mail..." class="form-control" />
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+    }
 
-<table class="table table-striped mt-3">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var paciente in Model)
-        {
-            <tr>
-                <td>@paciente.Nome</td>
-                <td>@paciente.Usuario?.Email</td>
-                <td>
-                    <a href="@Url.Action("Exibir", new { id = paciente.Id })" class="btn btn-info btn-sm">Exibir</a>
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning">Nenhum paciente encontrado.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th style="width: 30%;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var paciente in Model)
+                {
+                    <tr>
+                        <td>@paciente.Nome</td>
+                        <td>@paciente.Usuario?.Email</td>
+                        <td>
+                            <a href="@Url.Action("Exibir", new { id = paciente.Id })" class="btn btn-info btn-sm me-1">Exibir</a>
 
-                    @if (userRole == "Atendente" || userRole == "Administrador" || userRole == "Paciente")
-                    {
-                        <a href="@Url.Action("Alterar", new { id = paciente.Id })" class="btn btn-warning btn-sm">Alterar</a>
-                    }
+                            @if (User.IsInRole("Atendente") || User.IsInRole("Administrador") || User.IsInRole("Paciente"))
+                            {
+                                <a href="@Url.Action("Alterar", new { id = paciente.Id })" class="btn btn-warning btn-sm me-1">Editar</a>
+                            }
 
-                    @if (userRole == "Atendente" || userRole == "Administrador")
-                    {
-                        <a href="@Url.Action("Excluir", new { id = paciente.Id })" class="btn btn-danger btn-sm">Excluir</a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                            @if (User.IsInRole("Atendente") || User.IsInRole("Administrador"))
+                            {
+                                <a href="@Url.Action("Excluir", new { id = paciente.Id })" class="btn btn-danger btn-sm">Excluir</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

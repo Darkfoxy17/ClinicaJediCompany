@@ -7,7 +7,7 @@
     bool ehMesmoUsuario = usuarioLogadoId == Model.Id;
 }
 
-<h2>Alterar Paciente</h2>
+<h2>Editar Dados</h2>
 
 <form asp-action="Alterar" method="post">
     @Html.AntiForgeryToken()
@@ -28,24 +28,27 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="DataNascimento"></label>
+        <label asp-for="DataNascimento">Data de Nascimento</label>
         <input asp-for="DataNascimento" class="form-control" type="date" />
         <span asp-validation-for="DataNascimento" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Endereco"></label>
+        <label asp-for="Endereco">Endereço</label>
         <input asp-for="Endereco" class="form-control" />
         <span asp-validation-for="Endereco" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-secondary" href="@Url.Action("Index")">Cancelar</a>
+
+    <div class="form-group p-2">
+        <input type="submit" value="Salvar" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
 
     @if (ehMesmoUsuario && !isAtendente)
     {
         <div class="mt-3">
-            <a class="btn btn-warning" asp-controller="Conta" asp-action="AlterarSenha">
+            <a class="btn btn-warning" asp-area="" asp-controller="Conta" asp-action="AlterarSenha">
+
                 🔐 Alterar minha senha
             </a>
         </div>

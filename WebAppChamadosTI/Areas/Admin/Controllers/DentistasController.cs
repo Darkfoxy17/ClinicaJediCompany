@@ -36,6 +36,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             {
                 var dentista = bd.Dentistas
                     .Include(u => u.Usuario)
+                    .Include(d => d.Especializacao) // ← ADICIONADO
                     .FirstOrDefault(d => d.UsuarioId == usuarioLogado.Id);
 
                 ViewBag.NomeUsuario = dentista?.Nome ?? usuarioLogado.Email;
@@ -48,6 +49,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             var listaDentistas = bd.Dentistas
                 .Include(u => u.Usuario)
+                .Include(d => d.Especializacao) // ← ADICIONADO
                 .Where(d => d.Usuario.Perfil != Perfil.Atendente)
                 .ToList();
 
@@ -71,6 +73,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             {
                 var dentista = bd.Dentistas
                     .Include(u => u.Usuario)
+                    .Include(d => d.Especializacao)
                     .FirstOrDefault(d => d.UsuarioId == usuarioLogado.Id);
 
                 ViewBag.NomeUsuario = dentista?.Nome ?? usuarioLogado.Email;
@@ -83,6 +86,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             var query = bd.Dentistas
                 .Include(u => u.Usuario)
+                .Include(d => d.Especializacao)
                 .Where(d => d.Usuario.Perfil != Perfil.Atendente)
                 .AsQueryable();
 
@@ -90,7 +94,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             {
                 query = query.Where(t =>
                     t.Nome.Contains(busca) ||
-                    t.Usuario.Email.Contains(busca));
+                    t.Especializacao.Nome.Contains(busca));
             }
 
             var listaDentistas = query.ToList();
@@ -99,6 +103,8 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             return View(listaDentistas);
         }
+
+
 
         [HttpGet]
         public IActionResult Incluir(int idusuario)
@@ -218,18 +224,30 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                     Text = p.Nome
                 }).ToList();
 
+            var especializacoes = bd.Especializacoes
+                .Select(e => new SelectListItem
+                {
+                    Value = e.Id.ToString(),
+                    Text = e.Nome
+                }).ToList();
+
             var viewModel = new DentistaViewModel
             {
+                Id = dentista.Id,
                 Nome = dentista.Nome,
                 Telefone = dentista.Telefone,
                 DataNascimento = dentista.DataNascimento,
                 Endereco = dentista.Endereco,
+                EspecializacaoId = dentista.EspecializacaoId,
                 ProcedimentosIds = dentista.DentistaProcedimentos.Select(dp => dp.ProcedimentoId).ToList(),
-                ProcedimentosDisponiveis = procedimentos
+                ProcedimentosDisponiveis = procedimentos,
+                EspecializacoesDisponiveis = especializacoes
             };
 
             return View(viewModel);
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -258,6 +276,14 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                         Value = p.Id.ToString(),
                         Text = p.Nome
                     }).ToList();
+
+                model.EspecializacoesDisponiveis = bd.Especializacoes
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.Id.ToString(),
+                        Text = e.Nome
+                    }).ToList();
+
                 return View(model);
             }
 
@@ -271,12 +297,21 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 if (outroDentista != null || paciente != null)
                 {
                     ModelState.AddModelError("UsuarioId", "Este e-mail já está vinculado a outro cadastro!");
+
                     model.ProcedimentosDisponiveis = bd.Procedimentos
                         .Select(p => new SelectListItem
                         {
                             Value = p.Id.ToString(),
                             Text = p.Nome
                         }).ToList();
+
+                    model.EspecializacoesDisponiveis = bd.Especializacoes
+                        .Select(e => new SelectListItem
+                        {
+                            Value = e.Id.ToString(),
+                            Text = e.Nome
+                        }).ToList();
+
                     return View(model);
                 }
             }
@@ -285,6 +320,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             dentista.Telefone = model.Telefone;
             dentista.DataNascimento = model.DataNascimento;
             dentista.Endereco = model.Endereco;
+            dentista.EspecializacaoId = model.EspecializacaoId;
 
             dentista.DentistaProcedimentos.Clear();
             foreach (var procedimentoId in model.ProcedimentosIds)
@@ -300,12 +336,15 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+
+
         [HttpGet]
         public IActionResult Exibir(int id)
         {
             bd = new BancoDados();
             var dentista = bd.Dentistas
                 .Include(t => t.Usuario)
+                .Include(t => t.Especializacao) // 👈 ADICIONAR ISSO!
                 .FirstOrDefault(t => t.Id == id);
 
             if (dentista == null || dentista.Usuario.Perfil == Perfil.Atendente)
@@ -320,6 +359,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             return View(dentista);
         }
+
 
         [HttpGet]
         public IActionResult Excluir(int id)

@@ -1,66 +1,93 @@
 ﻿@model IEnumerable<WebAppChamadosTI.Models.Agendamento>
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Agendamentos";
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 }
 
-<h1>Agendamento</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">Consultas</h2>
 
-<p>
-    <a asp-action="Incluir" class="btn btn-success btn-sm">Novo Agendamento</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Paciente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dentista)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Procedimento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Data)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StatusAgendamento)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Paciente.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dentista.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Procedimento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StatusAgendamento)
-            </td>
+    <div class="d-flex align-items-start mb-4">
+        <form method="post" class="d-flex me-2" style="flex-grow: 1;">
+            <div class="input-group" style="max-width: 500px;">
+                <input type="text" name="busca" placeholder="Buscar por paciente, dentista ou procedimento..." class="form-control" />
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+        <a href="@Url.Action("Incluir")" class="btn btn-success">Nova Consulta</a>
+    </div>
 
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Paciente <span class="sort-icon"></span></th>
+                <th>Procedimento <span class="sort-icon"></span></th>
+                <th>Dentista <span class="sort-icon"></span></th>
+                <th>Data <span class="sort-icon"></span></th>
+                <th>Status <span class="sort-icon"></span></th>
+                <th style="width: 25%;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Paciente?.Nome</td>
+                    <td>@item.Procedimento?.Nome</td>
+                    <td>@item.Dentista?.Nome</td>
+                    <td>@item.Data.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.StatusAgendamento?.Nome</td>
+                    <td>
+                        <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-info btn-sm me-1">Exibir</a>
+                        <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-warning btn-sm me-1">Editar</a>
+                        <a asp-action="Excluir" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Excluir</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-            <td>
-                    <a asp-action="Alterar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Alterar</a> |
-                    <a asp-action="Exibir" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Exibir</a> |
-                    <a asp-action="Excluir" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Excluir</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<!-- Script para ordenação -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => {
+            let v1 = getCellValue(asc ? a : b, idx);
+            let v2 = getCellValue(asc ? b : a, idx);
+
+            if (idx === 3) { // Coluna Data
+                v1 = Date.parse(v1.split('/').reverse().join('-'));
+                v2 = Date.parse(v2.split('/').reverse().join('-'));
+            }
+
+            return v1.toString().localeCompare(v2.toString(), 'pt-BR', { numeric: true });
+        };
+
+        document.querySelectorAll("th").forEach((th, idx) => {
+            if (idx === 5) return; // Ignora coluna de Ações
+
+            th.style.cursor = "pointer";
+            th.title = "Clique para ordenar";
+
+            let asc = true;
+
+            th.addEventListener("click", function () {
+                const table = th.closest("table");
+                const tbody = table.querySelector("tbody");
+                const rows = Array.from(tbody.querySelectorAll("tr"));
+
+                rows.sort(comparer(idx, asc));
+                asc = !asc;
+                rows.forEach(row => tbody.appendChild(row));
+
+                // Atualiza ícones
+                document.querySelectorAll("th .sort-icon").forEach(icon => icon.textContent = "");
+                th.querySelector(".sort-icon").textContent = asc ? " ↑" : " ↓";
+            });
+        });
+    });
+</script>

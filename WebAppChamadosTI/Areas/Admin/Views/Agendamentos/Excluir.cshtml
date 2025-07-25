@@ -3,51 +3,14 @@
 @{
     ViewData["Title"] = "Excluir";
 }
+<h2>Confirmação de Exclusão</h2>
 
-<h1>Excluir</h1>
-<div>
-    <h4>Chamado</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Paciente)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Paciente.Nome)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Dentista)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Dentista.Nome)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Procedimento)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Procedimento)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Data)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Data)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusAgendamento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusAgendamento)
-        </dd>
-    </dl>
+<div class="alert alert-danger">
+    Deseja excluir esta consulta?
+</div>
     
-    <form asp-action="Excluir">
+<div>
+<form asp-action="Excluir">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Excluir" class="btn btn-danger" /> |
         <a asp-action="Index" class="btn btn-secondary">Voltar</a>

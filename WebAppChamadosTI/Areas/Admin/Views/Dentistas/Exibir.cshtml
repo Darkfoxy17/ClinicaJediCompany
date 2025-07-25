@@ -4,11 +4,14 @@
     ViewData["Title"] = "Visualizar Dentista";
 }
 
-<h2>Detalhes do Dentista</h2>
+<h2>Dados do Dentista</h2>
 
 <dl class="row">
     <dt class="col-sm-3">Nome:</dt>
     <dd class="col-sm-9">@Model.Nome</dd>
+
+    <dt class="col-sm-3">Especialização:</dt>
+    <dd class="col-sm-9">@Model.Especializacao?.Nome</dd>
 
     <dt class="col-sm-3">Email:</dt>
     <dd class="col-sm-9">@Model.Usuario.Email</dd>
@@ -23,4 +26,7 @@
     <dd class="col-sm-9">@Model.Endereco</dd>
 </dl>
 
-<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+<div>
+    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

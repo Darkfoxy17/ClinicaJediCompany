@@ -8,123 +8,137 @@ using WebAppChamadosTI.Models;
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Atendente")]
+    [Authorize(Roles = "Atendente")] // ← Permissão apenas para Atendente
     public class AgendamentosController : Controller
     {
-        BancoDados bd;
+        private BancoDados bd = new BancoDados();
 
-        public IActionResult Index()
-        {
-            bd = new BancoDados();
-            var listaAgendamentos = bd.Agendamentos
-                .Include(a => a.Paciente)
-                .Include(a => a.Dentista)
-                .ToList();
-
-            return View(listaAgendamentos);
-        }
-
-        [HttpPost]
         public IActionResult Index(string busca)
         {
-            bd = new BancoDados();
-            var listaAgendamentos = bd.Agendamentos
+            var query = bd.Agendamentos
                 .Include(a => a.Paciente)
                 .Include(a => a.Dentista)
-                .ToList();
+                .Include(a => a.Procedimento)
+                .Include(a => a.StatusAgendamento)
+                .AsQueryable();
 
-            if (!string.IsNullOrEmpty(busca))
+            if (!string.IsNullOrWhiteSpace(busca))
             {
-                listaAgendamentos = listaAgendamentos
-                    .Where(a => a.Data.ToString("dd/MM/yyyy").Contains(busca))
-                    .ToList();
+                busca = busca.ToLower();
+
+                // Tenta interpretar a busca como data
+                if (DateTime.TryParse(busca, out DateTime dataBusca))
+                {
+                    query = query.Where(a => a.Data.Date == dataBusca.Date);
+                }
+                else
+                {
+                    query = query.Where(a =>
+                        a.Paciente.Nome.ToLower().Contains(busca) ||
+                        a.Dentista.Nome.ToLower().Contains(busca) ||
+                        a.Procedimento.Nome.ToLower().Contains(busca) ||
+                        a.StatusAgendamento.Nome.ToLower().Contains(busca)
+                    );
+                }
             }
 
-            return View(listaAgendamentos);
+            var lista = query.ToList();
+            return View(lista);
         }
 
-        [HttpGet]
+
+
         public IActionResult Incluir()
         {
-            bd = new BancoDados();
-            var agendamento = new Agendamento
-            {
-                Data = DateTime.Now
-            };
+            ViewBag.Procedimentos = new SelectList(bd.Procedimentos.ToList(), "Id", "Nome");
+            ViewBag.Dentistas = new SelectList(Enumerable.Empty<SelectListItem>());
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.Include(p => p.Usuario).ToList(), "Id", "Nome");
+            return View();
+        }
 
-            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome");
+
+
+        [HttpPost]
+        public IActionResult Incluir(Agendamento agendamento)
+        {
+            if (ModelState.IsValid)
+            {
+                agendamento.StatusAgendamentoId = 1; // Define como "Pendente" automaticamente
+                bd.Agendamentos.Add(agendamento);
+                bd.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.Include(p => p.Usuario).ToList(), "Id", "Nome", agendamento.PacienteId);
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.Include(d => d.Usuario).ToList(), "Id", "Nome", agendamento.DentistaId);
             ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome");
 
             return View(agendamento);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Incluir(Agendamento model)
-        {
-            bd = new BancoDados();
-
-            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome", model.DentistaId);
-            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome", model.PacienteId);
-
-            if (ModelState.IsValid)
-            {
-                model.Data = DateTime.Now;
-                bd.Agendamentos.Add(model);
-                bd.SaveChanges();
-
-                return RedirectToAction("Index");
-            }
-
-            return View(model);
-        }
-
-        [HttpGet]
         public IActionResult Alterar(int id)
         {
-            bd = new BancoDados();
-            var agendamento = bd.Agendamentos
-                .Include(a => a.Paciente)
-                .Include(a => a.Dentista)
-                .FirstOrDefault(a => a.Id == id);
-
+            var agendamento = bd.Agendamentos.Find(id);
             if (agendamento == null)
-            {
                 return NotFound();
-            }
 
-            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome", agendamento.DentistaId);
-            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome", agendamento.PacienteId);
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.Include(p => p.Usuario).ToList(), "Id", "Nome", agendamento.PacienteId);
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.Include(d => d.Usuario).ToList(), "Id", "Nome", agendamento.DentistaId);
+            ViewBag.Procedimentos = new SelectList(bd.Procedimentos, "Id", "Nome", agendamento.ProcedimentoId);
+            ViewBag.Statuses = new SelectList(bd.StatusAgendamentos, "Id", "Nome", agendamento.StatusAgendamentoId);
 
             return View(agendamento);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Alterar(Agendamento model)
+        public IActionResult Alterar(Agendamento agendamento)
         {
             if (ModelState.IsValid)
             {
-                bd = new BancoDados();
-                var agendamentoExistente = bd.Agendamentos.FirstOrDefault(a => a.Id == model.Id);
+                var agendamentoExistente = bd.Agendamentos.Find(agendamento.Id);
 
                 if (agendamentoExistente == null)
                     return NotFound();
 
+                // Atualiza apenas os campos necessários
+                agendamentoExistente.StatusAgendamentoId = agendamento.StatusAgendamentoId;
+                agendamentoExistente.ProcedimentoId = agendamento.ProcedimentoId;
+                agendamentoExistente.DentistaId = agendamento.DentistaId;
+                agendamentoExistente.PacienteId = agendamento.PacienteId;
+                agendamentoExistente.Data = agendamento.Data;
+
                 bd.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
-            bd = new BancoDados();
-            ViewBag.Pacientes = new SelectList(bd.Pacientes.ToList(), "Id", "Nome", model.PacienteId);
-            ViewBag.Dentistas = new SelectList(bd.Dentistas.ToList(), "Id", "Nome", model.DentistaId);
-            return View(model);
+            ViewBag.Pacientes = new SelectList(bd.Pacientes.Include(p => p.Usuario).ToList(), "Id", "Nome", agendamento.PacienteId);
+            ViewBag.Dentistas = new SelectList(bd.Dentistas.Include(d => d.Usuario).ToList(), "Id", "Nome", agendamento.DentistaId);
+            ViewBag.Procedimentos = new SelectList(bd.Procedimentos, "Id", "Nome", agendamento.ProcedimentoId);
+            ViewBag.Statuses = new SelectList(bd.StatusAgendamentos, "Id", "Nome", agendamento.StatusAgendamentoId);
+
+            return View(agendamento);
         }
 
-        [HttpGet]
+
         public IActionResult Exibir(int id)
         {
-            bd = new BancoDados();
+            var agendamento = bd.Agendamentos
+                .Include(a => a.Paciente)
+                .Include(a => a.Dentista)
+                .Include(a => a.Procedimento)
+                .Include(a => a.StatusAgendamento)
+                .FirstOrDefault(a => a.Id == id);
+
+            if (agendamento == null)
+                return NotFound();
+
+            return View(agendamento);
+        }
+
+
+        public IActionResult Excluir(int id)
+        {
             var agendamento = bd.Agendamentos
                 .Include(a => a.Paciente)
                 .Include(a => a.Dentista)
@@ -134,38 +148,37 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 return NotFound();
 
             return View(agendamento);
+        }
+
+        [HttpPost, ActionName("Excluir")]
+        public IActionResult ConfirmarExclusao(int id)
+        {
+            var agendamento = bd.Agendamentos.Find(id);
+
+            if (agendamento == null)
+                return NotFound();
+
+            bd.Agendamentos.Remove(agendamento);
+            bd.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult Excluir(int id)
+        public JsonResult ObterDentistasPorProcedimento(int procedimentoId)
         {
-            bd = new BancoDados();
-            var agendamento = bd.Agendamentos
-                .Include(a => a.Paciente)
-                .Include(a => a.Dentista)
-                .FirstOrDefault(a => a.Id == id);
+            var dentistas = bd.DentistaProcedimentos
+                .Where(dp => dp.ProcedimentoId == procedimentoId)
+                .Select(dp => new
+                {
+                    dp.Dentista.Id,
+                    dp.Dentista.Nome
+                })
+                .Distinct()
+                .ToList();
 
-            if (agendamento == null)
-                return NotFound();
-
-            return View(agendamento);
+            return Json(dentistas);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Excluir(Agendamento model)
-        {
-            bd = new BancoDados();
-            var agendamento = bd.Agendamentos.FirstOrDefault(a => a.Id == model.Id);
-
-            if (agendamento != null)
-            {
-                bd.Agendamentos.Remove(agendamento);
-                bd.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(model);
-        }
     }
 }

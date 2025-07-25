@@ -24,7 +24,7 @@ namespace WebAppChamadosTI.Models
 
         [StringLength(1000, ErrorMessage = "Ultrapassou o máximo permitido")]
         [DataType(DataType.MultilineText)]
-        [Display(Name = "Observação")]
+        [Display(Name = "Observações")]
         public string? Descricao { get; set; }
 
         public int StatusAgendamentoId { get; set; }

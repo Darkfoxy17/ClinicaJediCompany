@@ -24,6 +24,7 @@ namespace WebAppChamadosTI.Data
         public DbSet<WebAppChamadosTI.Models.ContaViewModel> ContaViewModel { get; set; } = default!;
         public DbSet<WebAppChamadosTI.Models.RegistroViewModel> RegistroViewModel { get; set; } = default!;
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Relacionamento: Agendamento x Paciente
@@ -98,7 +99,7 @@ namespace WebAppChamadosTI.Data
                 new Procedimento { Id = 12, Nome = "Cirurgia Gengival" }
             );
 
-            // Seed de EspecializacaoProcedimento (vínculos)
+            // Seed de EspecializacaoProcedimento
             modelBuilder.Entity<EspecializacaoProcedimento>().HasData(
                 // Clínico Geral
                 new EspecializacaoProcedimento { EspecializacaoId = 1, ProcedimentoId = 1 },
@@ -125,8 +126,16 @@ namespace WebAppChamadosTI.Data
                 new EspecializacaoProcedimento { EspecializacaoId = 6, ProcedimentoId = 12 }
             );
 
+            // ✅ Seed de StatusAgendamento
+            modelBuilder.Entity<StatusAgendamento>().HasData(
+                new StatusAgendamento { Id = 1, Nome = "Pendente" },
+                new StatusAgendamento { Id = 2, Nome = "Concluído" },
+                new StatusAgendamento { Id = 3, Nome = "Cancelado" }
+            );
+
             base.OnModelCreating(modelBuilder);
         }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebAppChamadosTI.Data;
 using WebAppChamadosTI.Models;
 
@@ -13,32 +14,62 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         BancoDados bd;
 
         [HttpGet]
+        [HttpGet]
         public IActionResult Index()
         {
+            bd = new BancoDados();
+
+            // Se for Dentista, acesso negado
             if (User.IsInRole("Dentista"))
                 return RedirectToAction("AcessoNegado", "Home");
 
-            bd = new BancoDados();
-            var listaPacientes = bd.Pacientes.Include(c => c.Usuario).ToList();
+            // Se for Paciente, só pode ver o próprio registro
+            if (User.IsInRole("Paciente"))
+            {
+                int idPacienteLogado = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                var paciente = bd.Pacientes.Include(p => p.Usuario)
+                                           .FirstOrDefault(p => p.Id == idPacienteLogado);
+                if (paciente == null) return NotFound();
 
+                ViewBag.MostrarBusca = false;
+                return View(new List<Paciente> { paciente });
+            }
+
+            // Para Atendente ou Administrador
+            var listaPacientes = bd.Pacientes.Include(c => c.Usuario).ToList();
             ViewBag.MostrarBusca = User.IsInRole("Atendente");
 
             return View(listaPacientes);
         }
 
+
         [HttpPost]
         public IActionResult Index(string busca)
         {
+            bd = new BancoDados();
+
             if (User.IsInRole("Dentista"))
                 return RedirectToAction("AcessoNegado", "Home");
 
-            bd = new BancoDados();
+            // Paciente só vê a si mesmo
+            if (User.IsInRole("Paciente"))
+            {
+                int idPacienteLogado = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                var paciente = bd.Pacientes.Include(p => p.Usuario)
+                                           .FirstOrDefault(p => p.Id == idPacienteLogado);
+                if (paciente == null) return NotFound();
+
+                ViewBag.MostrarBusca = false;
+                return View(new List<Paciente> { paciente });
+            }
+
             var lista = bd.Pacientes.Include(c => c.Usuario).ToList();
 
             if (!string.IsNullOrWhiteSpace(busca))
             {
                 lista = lista
-                    .Where(c => c.Nome.Contains(busca) || c.Usuario.Email.Contains(busca))
+                    .Where(c => c.Nome.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+                                c.Usuario.Email.Contains(busca, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 
@@ -46,6 +77,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             return View(lista);
         }
+
 
         [HttpGet]
         public IActionResult Alterar(int id)

@@ -4,9 +4,8 @@
     ViewData["Title"] = "Incluir";
 }
 
-<h1 class="mb-4">Incluir</h1>
+<h1 class="mb-4">Criar Nova Consulta</h1>
 
-<h4 class="text-secondary">Chamado</h4>
 <hr />
 <div class="row">
     <div class="col-md-6">
@@ -14,28 +13,36 @@
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="form-group mb-3">
-                <label asp-for="PacienteId" class="form-label fw-bold text-primary">Paciente</label>
-                <select asp-for="PacienteId" class="form-control shadow-sm rounded" asp-items="ViewBag.Pacientes"></select>
-                <span asp-validation-for="PacienteId" class="text-danger"></span>
+                <label for="PacienteId" class="form-label fw-bold text-primary">Paciente</label>
+                <select id="PacienteId" name="PacienteId" class="form-select">
+                    <option value="">Selecione</option>
+                    @foreach (var item in ViewBag.Pacientes as SelectList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="DentistaId" class="form-label fw-bold text-primary">Dentista</label>
-                <select asp-for="DentistaId" class="form-control shadow-sm rounded" asp-items="ViewBag.Dentistas"></select>
-                <span asp-validation-for="DentistaId" class="text-danger"></span>
-            </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Procedimento" class="form-label fw-bold text-primary"></label>
-                <textarea asp-for="Procedimento" class="form-control shadow-sm rounded"></textarea>
-                <span asp-validation-for="Procedimento" class="text-danger"></span>
+                <label for="ProcedimentoId" class="form-label fw-bold text-primary">Procedimento</label>
+                <select id="ProcedimentoId" name="ProcedimentoId" class="form-select">
+                    <option value="">--Selecione o procedimento--</option>
+                    @foreach (var item in ViewBag.Procedimentos as SelectList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
             </div>
 
+
             <div class="form-group mb-3">
-                <label asp-for="Descricao" class="form-label fw-bold text-primary"></label>
-                <textarea asp-for="Descricao" class="form-control shadow-sm rounded"></textarea>
-                <span asp-validation-for="Descricao" class="text-danger"></span>
+                <label for="DentistaId" class="form-label fw-bold text-primary">Dentista</label>
+                <select id="DentistaId" name="DentistaId" class="form-select">
+                    <option value="">--Selecione um procedimento primeiro--</option>
+                </select>
             </div>
+
 
             <div class="form-group mb-3">
                 <label asp-for="Data" class="form-label fw-bold text-primary"></label>
@@ -44,10 +51,17 @@
             </div>
 
             <div class="form-group mb-3">
+                <label asp-for="Descricao" class="form-label fw-bold text-primary">Observações</label>
+                <textarea asp-for="Descricao" class="form-control shadow-sm rounded"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+
+
+@*             <div class="form-group mb-3">
                 <label asp-for="StatusAgendamento" class="form-label fw-bold text-primary"></label>
                 <textarea asp-for="StatusAgendamento" class="form-control shadow-sm rounded"></textarea>
                 <span asp-validation-for="StatusAgendamento" class="text-danger"></span>
-            </div>
+            </div> *@
 
             <div class="form-group">
                 <button type="submit" class="btn btn-success me-2">Salvar</button>
@@ -59,6 +73,30 @@
 
 @section Scripts {
     @{
+
+        <script>
+            document.getElementById("ProcedimentoId").addEventListener("change", function () {
+                var procedimentoId = this.value;
+                var dentistaSelect = document.getElementById("DentistaId");
+                dentistaSelect.innerHTML = '<option value="">Carregando...</option>';
+
+                if (procedimentoId) {
+                    fetch('/Admin/Agendamentos/ObterDentistasPorProcedimento?procedimentoId=' + procedimentoId)
+                        .then(response => response.json())
+                        .then(data => {
+                            dentistaSelect.innerHTML = '<option value="">Selecione</option>';
+                            data.forEach(function (dentista) {
+                                var option = document.createElement("option");
+                                option.value = dentista.id;
+                                option.text = dentista.nome;
+                                dentistaSelect.appendChild(option);
+                            });
+                        });
+                } else {
+                    dentistaSelect.innerHTML = '<option value="">Selecione um procedimento primeiro</option>';
+                }
+            });
+        </script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

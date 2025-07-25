@@ -4,9 +4,7 @@
     ViewData["Title"] = "Alterar";
 }
 
-<h1>Alterar</h1>
-
-<h4>Chamado</h4>
+<h1>Editar Detalhes</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -20,35 +18,38 @@
                 <span asp-validation-for="PacienteId" class="text-danger"></span>
             </div>
 
+            <div class="form-group mb-3">
+                <label asp-for="ProcedimentoId" class="form-label fw-bold text-primary">Procedimento</label>
+                <select asp-for="ProcedimentoId" asp-items="ViewBag.Procedimentos" class="form-select shadow-sm rounded" id="ProcedimentoId">
+                    <option value="">--Selecione o procedimento--</option>
+                </select>
+                <span asp-validation-for="ProcedimentoId" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="DentistaId" class="form-label fw-bold text-primary">Dentista</label>
-                <select asp-for="DentistaId" class="form-control shadow-sm rounded" asp-items="ViewBag.Dentistas"></select>
+                <select asp-for="DentistaId" class="form-control shadow-sm rounded" asp-items="ViewBag.Dentistas" id="DentistaId"></select>
                 <span asp-validation-for="DentistaId" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Procedimento" class="form-label fw-bold text-primary"></label>
-                <textarea asp-for="Procedimento" class="form-control shadow-sm rounded"></textarea>
-                <span asp-validation-for="Procedimento" class="text-danger"></span>
+
+            <div class="form-group mb-3">
+                <label asp-for="Data" class="form-label fw-bold text-primary">Data</label>
+                <input asp-for="Data" class="form-control shadow-sm rounded" type="datetime-local" />
+                <span asp-validation-for="Data" class="text-danger"></span>
             </div>
 
+
             <div class="form-group">
-                <label asp-for="Descricao" class="form-label fw-bold text-primary"></label>
+                <label asp-for="Descricao" class="form-label fw-bold text-primary">Descrição</label>
                 <textarea asp-for="Descricao" class="form-control shadow-sm rounded"></textarea>
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label fw-bold text-primary">Data</label>
-                <div class="form-control-plaintext bg-light border rounded px-3 py-2 shadow-sm">
-                    @Model.Data.ToString("dd/MM/yyyy HH:mm")
-                </div>
-            </div>
-
             <div class="form-group">
-                <label asp-for="StatusAgendamento" class="form-label fw-bold text-primary"></label>
-                <textarea asp-for="StatusAgendamento" class="form-control shadow-sm rounded"></textarea>
-                <span asp-validation-for="StatusAgendamento" class="text-danger"></span>
+                <label asp-for="StatusAgendamentoId" class="form-label fw-bold text-primary">Status</label>
+                <select asp-for="StatusAgendamentoId" class="form-control shadow-sm rounded" asp-items="ViewBag.Statuses"></select>
+                <span asp-validation-for="StatusAgendamentoId" class="text-danger"></span>
             </div>
 
             <div class="form-group p-2">
@@ -60,7 +61,58 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const procedimentoSelect = document.getElementById("ProcedimentoId");
+            const dentistaSelect = document.getElementById("DentistaId");
+
+            function bloquearDentista() {
+                dentistaSelect.innerHTML = '<option value="">Selecione um procedimento primeiro</option>';
+                dentistaSelect.value = "";
+                dentistaSelect.style.pointerEvents = "none";
+                dentistaSelect.style.backgroundColor = "#e9ecef";
+            }
+
+            function desbloquearDentista() {
+                dentistaSelect.style.pointerEvents = "auto";
+                dentistaSelect.style.backgroundColor = "";
+            }
+
+            procedimentoSelect.addEventListener("change", function () {
+                const procedimentoId = this.value;
+
+                if (!procedimentoId) {
+                    bloquearDentista();
+                    return;
+                }
+
+                dentistaSelect.innerHTML = '<option value="">Carregando...</option>';
+                dentistaSelect.style.pointerEvents = "none";
+                dentistaSelect.style.backgroundColor = "#e9ecef";
+
+                fetch('/Admin/Agendamentos/ObterDentistasPorProcedimento?procedimentoId=' + procedimentoId)
+                    .then(response => response.json())
+                    .then(data => {
+                        dentistaSelect.innerHTML = '<option value="">Selecione</option>';
+                        data.forEach(function (dentista) {
+                            const option = document.createElement("option");
+                            option.value = dentista.id;
+                            option.text = dentista.nome;
+                            dentistaSelect.appendChild(option);
+                        });
+                        desbloquearDentista();
+                    });
+            });
+
+            // Estado inicial ao carregar a página
+            if (!procedimentoSelect.value) {
+                bloquearDentista();
+            } else {
+                desbloquearDentista();
+            }
+        });
+    </script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }
+

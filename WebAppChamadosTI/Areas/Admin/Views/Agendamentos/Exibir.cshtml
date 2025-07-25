@@ -1,36 +1,36 @@
 ﻿@model WebAppChamadosTI.Models.Agendamento
 
 @{
-    ViewData["Title"] = "Exibir Chamado";
+    ViewData["Title"] = "Exibir Agendamento";
 }
 
-<h1>Exibir Chamado</h1>
+<h1>Detalhes da Consulta</h1>
 
 <div>
-    <h4>Detalhes</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">Cliente</dt>
         <dd class="col-sm-10">@(Model.Paciente?.Nome ?? "Não atribuído")</dd>
 
-        <dt class="col-sm-2">Técnico</dt>
-        <dd class="col-sm-10">@(Model.Dentista?.Nome ?? "Não atribuído")</dd>
         <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Procedimento)</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(m => m.Procedimento)</dd>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.Procedimento.Nome)</dd>
 
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Descricao)</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(m => m.Descricao)</dd>
+        <dt class="col-sm-2">Dentista</dt>
+        <dd class="col-sm-10">@(Model.Dentista?.Nome ?? "Não atribuído")</dd>
 
         <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Data)</dt>
         <dd class="col-sm-10">@Html.DisplayFor(m => m.Data)</dd>
 
+        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Descricao)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.Descricao)</dd>
+
         <dt class="col-sm-2">@Html.DisplayNameFor(m => m.StatusAgendamento)</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(m => m.StatusAgendamento)</dd>
+        <dd class="col-sm-10">@Html.DisplayFor(m => m.StatusAgendamento.Nome)</dd>
 
     </dl>
 </div>
 
 <div>
-    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Alterar</a>
+    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Editar</a>
     <a asp-action="Index" class="btn btn-secondary">Voltar</a>
 </div>

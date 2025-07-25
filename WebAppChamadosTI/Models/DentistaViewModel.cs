@@ -5,7 +5,8 @@ namespace WebAppChamadosTI.Models
 {
     public class DentistaViewModel
     {
-        // Dados do Dentista
+        public int Id { get; set; }
+
         [Required]
         public string Nome { get; set; }
 
