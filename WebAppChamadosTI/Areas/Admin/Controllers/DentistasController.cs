@@ -196,11 +196,10 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
 
 
-
-        [HttpGet]
         public IActionResult Alterar(int id)
         {
             bd = new BancoDados();
+
             var dentista = bd.Dentistas
                 .Include(t => t.Usuario)
                 .Include(t => t.DentistaProcedimentos)
@@ -217,21 +216,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (usuarioLogado.Perfil == Perfil.Dentista && dentista.UsuarioId != usuarioLogado.Id)
                 return RedirectToAction("AcessoNegado", "Home", new { area = "" });
 
-            var procedimentos = bd.Procedimentos
-                .Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.Nome
-                }).ToList();
-
-            var especializacoes = bd.Especializacoes
-                .Select(e => new SelectListItem
-                {
-                    Value = e.Id.ToString(),
-                    Text = e.Nome
-                }).ToList();
-
-            var viewModel = new DentistaViewModel
+            var viewModel = new DentistaEditarViewModel
             {
                 Id = dentista.Id,
                 Nome = dentista.Nome,
@@ -240,8 +225,8 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 Endereco = dentista.Endereco,
                 EspecializacaoId = dentista.EspecializacaoId,
                 ProcedimentosIds = dentista.DentistaProcedimentos.Select(dp => dp.ProcedimentoId).ToList(),
-                ProcedimentosDisponiveis = procedimentos,
-                EspecializacoesDisponiveis = especializacoes
+                ProcedimentosDisponiveis = ObterProcedimentos(),
+                EspecializacoesDisponiveis = ObterEspecializacoes()
             };
 
             return View(viewModel);
@@ -249,15 +234,17 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
 
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Alterar(int id, DentistaViewModel model)
+        public IActionResult Alterar(DentistaEditarViewModel model)
         {
             bd = new BancoDados();
             var usuarioLogado = ObterUsuarioLogado();
+
             var dentista = bd.Dentistas
                 .Include(d => d.DentistaProcedimentos)
-                .FirstOrDefault(t => t.Id == id);
+                .FirstOrDefault(t => t.Id == model.Id);
 
             if (dentista == null || bd.Usuarios.FirstOrDefault(u => u.Id == dentista.UsuarioId)?.Perfil == Perfil.Atendente)
                 return NotFound();
@@ -270,48 +257,22 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.ProcedimentosDisponiveis = bd.Procedimentos
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.Nome
-                    }).ToList();
-
-                model.EspecializacoesDisponiveis = bd.Especializacoes
-                    .Select(e => new SelectListItem
-                    {
-                        Value = e.Id.ToString(),
-                        Text = e.Nome
-                    }).ToList();
-
+                model.ProcedimentosDisponiveis = ObterProcedimentos();
+                model.EspecializacoesDisponiveis = ObterEspecializacoes();
                 return View(model);
             }
 
             if (usuarioLogado.Perfil == Perfil.Atendente)
             {
-                var outroDentista = bd.Dentistas
-                    .FirstOrDefault(t => t.UsuarioId == dentista.UsuarioId && t.Id != dentista.Id);
-                var paciente = bd.Pacientes
-                    .FirstOrDefault(c => c.UsuarioId == dentista.UsuarioId);
+                var outroDentista = bd.Dentistas.FirstOrDefault(t => t.UsuarioId == dentista.UsuarioId && t.Id != dentista.Id);
+                var paciente = bd.Pacientes.FirstOrDefault(c => c.UsuarioId == dentista.UsuarioId);
 
                 if (outroDentista != null || paciente != null)
                 {
                     ModelState.AddModelError("UsuarioId", "Este e-mail já está vinculado a outro cadastro!");
 
-                    model.ProcedimentosDisponiveis = bd.Procedimentos
-                        .Select(p => new SelectListItem
-                        {
-                            Value = p.Id.ToString(),
-                            Text = p.Nome
-                        }).ToList();
-
-                    model.EspecializacoesDisponiveis = bd.Especializacoes
-                        .Select(e => new SelectListItem
-                        {
-                            Value = e.Id.ToString(),
-                            Text = e.Nome
-                        }).ToList();
-
+                    model.ProcedimentosDisponiveis = ObterProcedimentos();
+                    model.EspecializacoesDisponiveis = ObterEspecializacoes();
                     return View(model);
                 }
             }
@@ -336,6 +297,27 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+
+
+
+
+        private List<SelectListItem> ObterEspecializacoes()
+        {
+            return bd.Especializacoes.Select(e => new SelectListItem
+            {
+                Value = e.Id.ToString(),
+                Text = e.Nome
+            }).ToList();
+        }
+
+        private List<SelectListItem> ObterProcedimentos()
+        {
+            return bd.Procedimentos.Select(p => new SelectListItem
+            {
+                Value = p.Id.ToString(),
+                Text = p.Nome
+            }).ToList();
+        }
 
 
         [HttpGet]
@@ -384,7 +366,11 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public IActionResult Excluir(Dentista model)
         {
             bd = new BancoDados();
-            var dentista = bd.Dentistas.Include(d => d.Usuario).FirstOrDefault(t => t.Id == model.Id);
+            var dentista = bd.Dentistas
+                .Include(d => d.Usuario)
+                .Include(d => d.DentistaProcedimentos)
+                .FirstOrDefault(t => t.Id == model.Id);
+
             var usuarioLogado = ObterUsuarioLogado();
 
             if (dentista == null || dentista.Usuario.Perfil == Perfil.Atendente)
@@ -393,10 +379,16 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             if (!User.IsInRole("Atendente"))
                 return RedirectToAction("AcessoNegado", "Home", new { area = "" });
 
+            // Exclui os registros de DentistaProcedimentos
+            bd.DentistaProcedimentos.RemoveRange(dentista.DentistaProcedimentos);
+
+            // Depois, exclui o dentista
             bd.Dentistas.Remove(dentista);
             bd.SaveChanges();
+
             return RedirectToAction("Index");
         }
+
 
 
     }

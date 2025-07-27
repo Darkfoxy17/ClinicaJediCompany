@@ -1,0 +1,111 @@
+﻿@model IEnumerable<WebAppChamadosTI.Models.Agendamento>
+
+@{
+    ViewData["Title"] = "Minhas Consultas";
+    var pendentes = Model.Where(a => a.StatusAgendamento?.Nome == "Pendente");
+    var concluidas = Model.Where(a => a.StatusAgendamento?.Nome == "Concluído");
+    var isPaciente = User.IsInRole("Paciente");
+    var isDentista = User.IsInRole("Dentista");
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@* @if (isPaciente)
+    {
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+             <a href="/Admin/Agendamentos/Incluir" class="btn btn-primary">Marcar consulta</a>
+          </div>
+        </div>
+     } *@
+
+
+@if (!pendentes.Any() && !concluidas.Any())
+{
+    <div class="alert alert-info">
+        @if (isPaciente)
+        {
+            <p>Olá! 😊 Você ainda não possui consultas agendadas no momento.</p>
+            <p>Que tal cuidar do seu sorriso? Marque uma consulta agora mesmo!</p>
+            <a href="/Admin/Agendamentos/Incluir" class="btn btn-primary mt-2">Marcar consulta</a>
+        }
+        else if (isDentista)
+        {
+            <p>Olá! No momento, não há consultas agendadas vinculadas ao seu perfil.</p>
+            <p>Fique atento à agenda e acompanhe os próximos agendamentos dos pacientes.</p>
+        }
+    </div>
+}
+else
+{
+    @* Botão só aparece se houver consultas concluídas *@
+    @if (concluidas.Any())
+    {
+        <button class="btn btn-outline-secondary mb-3" onclick="toggleConcluidas()">Mostrar realizadas</button>
+    }
+
+
+
+
+    <div class="row row-cols-1 g-3">
+        @foreach (var item in pendentes)
+        {
+            <div class="col">
+                <div class="card shadow-sm border border-secondary">
+                    <div class="card-header fw-bold bg-warning text-dark">
+                        Pendente
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Paciente:</strong> @item.Paciente?.Nome</li>
+                            <li class="list-group-item"><strong>Procedimento:</strong> @item.Procedimento?.Nome</li>
+                            <li class="list-group-item"><strong>Dentista:</strong> @item.Dentista?.Nome</li>
+                            <li class="list-group-item"><strong>Data:</strong> @item.Data.ToString("dd/MM/yyyy HH:mm")</li>
+                            @if (User.IsInRole("Dentista"))
+                            {
+                                <li class="list-group-item"><strong>Observação:</strong> @item.Descricao</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @foreach (var item in concluidas)
+        {
+            <div class="col consulta-concluida d-none">
+                <div class="card shadow-sm border border-secondary">
+                    <div class="card-header fw-bold bg-success text-white">
+                        Concluído
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Paciente:</strong> @item.Paciente?.Nome</li>
+                            <li class="list-group-item"><strong>Procedimento:</strong> @item.Procedimento?.Nome</li>
+                            <li class="list-group-item"><strong>Dentista:</strong> @item.Dentista?.Nome</li>
+                            <li class="list-group-item"><strong>Data:</strong> @item.Data.ToString("dd/MM/yyyy HH:mm")</li>
+                            @if (User.IsInRole("Dentista"))
+                            {
+                                <li class="list-group-item"><strong>Observação:</strong> @item.Descricao</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function toggleConcluidas() {
+            const concluidas = document.querySelectorAll('.consulta-concluida');
+            concluidas.forEach(el => el.classList.toggle('d-none'));
+
+            const btn = event.target;
+            btn.innerText = btn.innerText.includes("Mostrar")
+                ? "Ocultar"
+                : "Mostrar realizadas";
+        }
+    </script>
+}

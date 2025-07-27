@@ -1,4 +1,4 @@
-﻿@model WebAppChamadosTI.Models.DentistaViewModel
+﻿@model WebAppChamadosTI.Models.DentistaEditarViewModel
 
 @{
     ViewData["Title"] = "Alterar Dentista";
@@ -49,6 +49,8 @@
     <div class="form-group p-2">
         <input type="submit" value="Salvar" class="btn btn-primary" />
         <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    </div>
+
 
     @if (ehMesmoUsuario && !isAtendente)
     {

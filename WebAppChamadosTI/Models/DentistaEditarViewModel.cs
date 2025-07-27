@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebAppChamadosTI.Models
 {
-    public class DentistaViewModel
+    public class DentistaEditarViewModel
     {
         public int Id { get; set; }
 
@@ -24,18 +24,8 @@ namespace WebAppChamadosTI.Models
         [Display(Name = "Especialização")]
         public int EspecializacaoId { get; set; }
 
-        public List<SelectListItem> EspecializacoesDisponiveis { get; set; } = new();
-
         public List<int> ProcedimentosIds { get; set; } = new();
         public List<SelectListItem> ProcedimentosDisponiveis { get; set; } = new();
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } // Incluir
-
-        [Required]
-        [MinLength(8, ErrorMessage = "A senha deve ter pelo menos 8 caracteres.")]
-        public string Senha { get; set; } // Incluir
-
+        public List<SelectListItem> EspecializacoesDisponiveis { get; set; } = new();
     }
 }

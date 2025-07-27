@@ -8,7 +8,7 @@ using WebAppChamadosTI.Models;
 namespace WebAppChamadosTI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Atendente")] // ← Permissão apenas para Atendente
+    [Authorize(Roles = "Atendente")]
     public class AgendamentosController : Controller
     {
         private BancoDados bd = new BancoDados();
