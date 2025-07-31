@@ -2,99 +2,97 @@
 
 @{
     ViewData["Title"] = "Minhas Consultas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var pendentes = Model.Where(a => a.StatusAgendamento?.Nome == "Pendente");
     var concluidas = Model.Where(a => a.StatusAgendamento?.Nome == "Concluído");
     var isPaciente = User.IsInRole("Paciente");
     var isDentista = User.IsInRole("Dentista");
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-lg-10 border rounded p-4 shadow-sm bg-white">
 
-@* @if (isPaciente)
-    {
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div>
-             <a href="/Admin/Agendamentos/Incluir" class="btn btn-primary">Marcar consulta</a>
-          </div>
-        </div>
-     } *@
+        <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
 
-
-@if (!pendentes.Any() && !concluidas.Any())
-{
-    <div class="alert alert-info">
+        @if (!pendentes.Any() && !concluidas.Any())
+        {
+            <div class="alert alert-info text-center">
         @if (isPaciente)
-        {
-            <p>Olá! 😊 Você ainda não possui consultas agendadas no momento.</p>
-            <p>Que tal cuidar do seu sorriso? Marque uma consulta agora mesmo!</p>
-            <a href="/Admin/Agendamentos/Incluir" class="btn btn-primary mt-2">Marcar consulta</a>
-        }
-        else if (isDentista)
-        {
-            <p>Olá! No momento, não há consultas agendadas vinculadas ao seu perfil.</p>
-            <p>Fique atento à agenda e acompanhe os próximos agendamentos dos pacientes.</p>
-        }
-    </div>
-}
-else
 {
-    @* Botão só aparece se houver consultas concluídas *@
-    @if (concluidas.Any())
-    {
-        <button class="btn btn-outline-secondary mb-3" onclick="toggleConcluidas()">Mostrar realizadas</button>
-    }
+             <p>Olá! 😊 Você ainda não possui consultas agendadas no momento.</p>
+                 <p class="lead mt-3">Marque sua consulta agora mesmo!</p>
+                 <a class="btn btn-success mt-3"
+                  href="https://wa.me/5599999999999?text=Olá%2C+gostaria+de+agendar+uma+consulta+na+Clínica+Jedi."
+                  target="_blank">
+                 <i class="fab fa-whatsapp"></i> Enviar mensagem via WhatsApp
+                 </a>
 
 
-
-
-    <div class="row row-cols-1 g-3">
-        @foreach (var item in pendentes)
-        {
-            <div class="col">
-                <div class="card shadow-sm border border-secondary">
-                    <div class="card-header fw-bold bg-warning text-dark">
-                        Pendente
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>Paciente:</strong> @item.Paciente?.Nome</li>
-                            <li class="list-group-item"><strong>Procedimento:</strong> @item.Procedimento?.Nome</li>
-                            <li class="list-group-item"><strong>Dentista:</strong> @item.Dentista?.Nome</li>
-                            <li class="list-group-item"><strong>Data:</strong> @item.Data.ToString("dd/MM/yyyy HH:mm")</li>
-                            @if (User.IsInRole("Dentista"))
-                            {
-                                <li class="list-group-item"><strong>Observação:</strong> @item.Descricao</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        }
-
-        @foreach (var item in concluidas)
-        {
-            <div class="col consulta-concluida d-none">
-                <div class="card shadow-sm border border-secondary">
-                    <div class="card-header fw-bold bg-success text-white">
-                        Concluído
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>Paciente:</strong> @item.Paciente?.Nome</li>
-                            <li class="list-group-item"><strong>Procedimento:</strong> @item.Procedimento?.Nome</li>
-                            <li class="list-group-item"><strong>Dentista:</strong> @item.Dentista?.Nome</li>
-                            <li class="list-group-item"><strong>Data:</strong> @item.Data.ToString("dd/MM/yyyy HH:mm")</li>
-                            @if (User.IsInRole("Dentista"))
-                            {
-                                <li class="list-group-item"><strong>Observação:</strong> @item.Descricao</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
 }
+
+                else if (isDentista)
+                {
+                    <p>Olá! No momento, não há consultas agendadas vinculadas ao seu perfil.</p>
+                    <p>Fique atento à agenda e acompanhe os próximos agendamentos dos pacientes.</p>
+                }
+            </div>
+        }
+        else
+        {
+            @if (concluidas.Any())
+            {
+                <div class="text-center mb-3">
+                    <button class="btn btn-outline-secondary" onclick="toggleConcluidas()">Mostrar realizadas</button>
+                </div>
+            }
+
+            <div class="d-flex flex-column gap-3 align-items-center">
+                @foreach (var item in pendentes)
+                {
+                    <div class="card shadow-sm border border-secondary w-75">
+                        <div class="card-header fw-bold bg-warning text-dark">
+                            Pendente
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Paciente:</strong> @item.Paciente?.Nome</li>
+                                <li class="list-group-item"><strong>Procedimento:</strong> @item.Procedimento?.Nome</li>
+                                <li class="list-group-item"><strong>Dentista:</strong> @item.Dentista?.Nome</li>
+                                <li class="list-group-item"><strong>Data:</strong> @item.Data.ToString("dd/MM/yyyy HH:mm")</li>
+                                @if (isDentista)
+                                {
+                                    <li class="list-group-item"><strong>Observação:</strong> @item.Descricao</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var item in concluidas)
+                {
+                    <div class="card shadow-sm border border-secondary w-75 consulta-concluida d-none">
+                        <div class="card-header fw-bold bg-success text-white">
+                            Concluído
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Paciente:</strong> @item.Paciente?.Nome</li>
+                                <li class="list-group-item"><strong>Procedimento:</strong> @item.Procedimento?.Nome</li>
+                                <li class="list-group-item"><strong>Dentista:</strong> @item.Dentista?.Nome</li>
+                                <li class="list-group-item"><strong>Data:</strong> @item.Data.ToString("dd/MM/yyyy HH:mm")</li>
+                                @if (isDentista)
+                                {
+                                    <li class="list-group-item"><strong>Observação:</strong> @item.Descricao</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>
 
 @section Scripts {
     <script>

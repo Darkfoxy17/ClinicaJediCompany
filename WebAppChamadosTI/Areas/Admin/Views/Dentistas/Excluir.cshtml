@@ -2,16 +2,22 @@
 
 @{
     ViewData["Title"] = "Excluir Dentista";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Confirmação de Exclusão</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-md-6 border rounded p-4 shadow-sm bg-white text-center">
+        <h2 class="mb-4">Confirmação de Exclusão</h2>
+        <hr />
 
-<div class="alert alert-danger">
-    Tem certeza que deseja excluir o dentista <strong>@Model.Nome</strong>
+        <div class="alert alert-danger mt-3">
+            Tem certeza que deseja excluir o dentista?
+        </div>
+
+        <form asp-action="Excluir" method="post" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger me-2">Excluir</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
 </div>
-
-<form asp-action="Excluir" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Excluir</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>

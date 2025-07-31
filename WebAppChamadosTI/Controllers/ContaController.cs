@@ -165,40 +165,45 @@ namespace WebAppChamadosTI.Controllers
         return View();
     }
 
-    [Authorize]
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult AlterarSenha(AlterarSenhaViewModel viewModel)
-    {
-        if (ModelState.IsValid)
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlterarSenha(AlterarSenhaViewModel viewModel)
         {
-            BancoDados bd = new BancoDados();
-
-            string emailUsuario = User.Identity.Name;
-
-            var usuario = bd.Usuarios.FirstOrDefault(u => u.Email == emailUsuario);
-
-            if (usuario == null)
+            if (ModelState.IsValid)
             {
-                return Unauthorized();
+                BancoDados bd = new BancoDados();
+
+                string emailUsuario = User.Identity.Name;
+
+                var usuario = bd.Usuarios.FirstOrDefault(u => u.Email == emailUsuario);
+
+                if (usuario == null)
+                {
+                    return Unauthorized();
+                }
+
+                if (usuario.Senha != viewModel.SenhaAtual)
+                {
+                    ModelState.AddModelError("SenhaAtual", "A senha atual está incorreta.");
+                    return View(viewModel);
+                }
+
+                usuario.Senha = viewModel.NovaSenha;
+                bd.SaveChanges();
+
+                // 🧼 Encerra a sessão atual
+                await HttpContext.SignOutAsync();
+
+                // 🔁 Redireciona para login
+                return RedirectToAction("Entrar", "Conta");
             }
 
-            if (usuario.Senha != viewModel.SenhaAtual)
-            {
-                ModelState.AddModelError("SenhaAtual", "A senha atual está incorreta.");
-                return View(viewModel);
-            }
-
-            usuario.Senha = viewModel.NovaSenha;
-            bd.SaveChanges();
-
-            TempData["Mensagem"] = "Senha alterada com sucesso!";
-            return RedirectToAction("Index", "Home");
+            return View(viewModel);
         }
 
-        return View(viewModel);
+
+
+
     }
-
-
-}
 }

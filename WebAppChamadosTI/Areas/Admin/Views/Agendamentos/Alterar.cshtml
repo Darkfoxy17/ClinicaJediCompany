@@ -2,19 +2,20 @@
 
 @{
     ViewData["Title"] = "Alterar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Editar Detalhes</h1>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Alterar">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6 border rounded shadow-sm bg-white p-4">
+        <h1 class="mb-4 text-center">Editar Consulta</h1>
+        <hr />
+        <form asp-action="Alterar" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
 
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="PacienteId" class="form-label fw-bold text-primary">Paciente</label>
-                <select asp-for="PacienteId" class="form-control shadow-sm rounded" asp-items="ViewBag.Pacientes"></select>
+                <select asp-for="PacienteId" class="form-select shadow-sm rounded" asp-items="ViewBag.Pacientes"></select>
                 <span asp-validation-for="PacienteId" class="text-danger"></span>
             </div>
 
@@ -26,12 +27,11 @@
                 <span asp-validation-for="ProcedimentoId" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="DentistaId" class="form-label fw-bold text-primary">Dentista</label>
-                <select asp-for="DentistaId" class="form-control shadow-sm rounded" asp-items="ViewBag.Dentistas" id="DentistaId"></select>
+                <select asp-for="DentistaId" class="form-select shadow-sm rounded" asp-items="ViewBag.Dentistas" id="DentistaId"></select>
                 <span asp-validation-for="DentistaId" class="text-danger"></span>
             </div>
-
 
             <div class="form-group mb-3">
                 <label asp-for="Data" class="form-label fw-bold text-primary">Data</label>
@@ -39,22 +39,21 @@
                 <span asp-validation-for="Data" class="text-danger"></span>
             </div>
 
-
-            <div class="form-group">
-                <label asp-for="Descricao" class="form-label fw-bold text-primary">Descrição</label>
+            <div class="form-group mb-3">
+                <label asp-for="Descricao" class="form-label fw-bold text-primary">Observações</label>
                 <textarea asp-for="Descricao" class="form-control shadow-sm rounded"></textarea>
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div class="form-group mb-4">
                 <label asp-for="StatusAgendamentoId" class="form-label fw-bold text-primary">Status</label>
-                <select asp-for="StatusAgendamentoId" class="form-control shadow-sm rounded" asp-items="ViewBag.Statuses"></select>
+                <select asp-for="StatusAgendamentoId" class="form-select shadow-sm rounded" asp-items="ViewBag.Statuses"></select>
                 <span asp-validation-for="StatusAgendamentoId" class="text-danger"></span>
             </div>
 
-            <div class="form-group p-2">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            <div class="form-group text-end">
+                <button type="submit" class="btn btn-success me-2">Salvar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
             </div>
         </form>
     </div>
@@ -104,7 +103,6 @@
                     });
             });
 
-            // Estado inicial ao carregar a página
             if (!procedimentoSelect.value) {
                 bloquearDentista();
             } else {
@@ -115,4 +113,3 @@
 
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
-

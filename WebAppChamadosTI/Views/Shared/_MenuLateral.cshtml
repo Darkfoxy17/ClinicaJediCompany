@@ -1,0 +1,41 @@
+﻿@using System.Security.Claims
+@{
+    var perfil = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value?.Trim().ToLower();
+    var isAtendente = perfil == "atendente";
+    var isDentista = perfil == "dentista";
+    var isPaciente = perfil == "paciente";
+    var currentPath = Context.Request.Path.Value.ToLower();
+}
+
+
+
+
+<div class="menu-container" id="menuDropdown" style="display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 30px 10px; font-size: 16px;">
+    @if (isAtendente)
+    {
+
+        <p>Consultas</p>
+
+        <a href="/Admin/Agendamentos" class="@(currentPath.StartsWith("/admin/agendamentos") ? "active" : "")"><i class="fas fa-calendar-check"></i> Consultas</a>
+        <a href="/Admin/Pacientes" class="@(currentPath.StartsWith("/admin/pacientes") ? "active" : "")"><i class="fas fa-users"></i> Pacientes</a>
+        <a href="/Admin/Dentistas" class="@(currentPath.StartsWith("/admin/dentistas") ? "active" : "")"><i class="fas fa-user-md"></i> Dentistas</a>
+    }
+    else if (isPaciente)
+    {
+        <p>Consultas</p>
+
+        <a href="/Admin/Consultas" class="@(currentPath.StartsWith("/admin/consultas") ? "active" : "")"><i class="fas fa-list"></i> Minhas Consultas</a>
+        <a href="/Admin/Pacientes" class="@(currentPath == "/admin/pacientes" ? "active" : "")"><i class="fas fa-cog"></i> Configurações</a>
+    }
+    else if (isDentista)
+    {
+        <p>Consultas</p>
+
+        <a href="/Admin/Consultas" class="@(currentPath.StartsWith("/admin/consultas") ? "active" : "")"><i class="fas fa-list"></i> Minhas Consultas</a>
+        <a href="/Admin/Dentistas" class="@(currentPath == "/admin/dentistas" ? "active" : "")"><i class="fas fa-cog"></i> Configurações</a>
+    }
+
+    <a href="/Conta/Sair" style="color: red;"><i class="fas fa-sign-out-alt"></i> Sair</a>
+</div>
+
+<div id="menuOverlay" onclick="closeMenu()"></div>

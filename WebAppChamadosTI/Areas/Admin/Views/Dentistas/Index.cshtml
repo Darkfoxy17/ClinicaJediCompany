@@ -3,57 +3,61 @@
 
 @{
     ViewData["Title"] = "Lista de Dentistas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
     var mostrarBusca = userRole == "Atendente";
     var tituloPagina = userRole == "Dentista" ? "Configurações" : "Dentistas";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">@tituloPagina</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-lg-10 border rounded p-4 shadow-sm bg-white">
+        <h2 class="text-center mb-4">@tituloPagina</h2>
+        <hr />
 
-    <div class="d-flex align-items-start mb-4">
         @if (mostrarBusca)
         {
-            <form method="post" class="d-flex me-2" style="flex-grow: 1;">
-                <div class="input-group" style="max-width: 500px;">
-                    <input type="text" name="busca" placeholder="Buscar por nome ou especialização..." class="form-control" />
-                    <button type="submit" class="btn btn-primary">Buscar</button>
-                </div>
-            </form>
+            <div class="d-flex justify-content-between flex-wrap mb-4">
+                <form method="post" class="d-flex flex-grow-1 me-2 mb-2" style="max-width: 500px;">
+                    <div class="input-group w-100">
+                        <input type="text" name="busca" placeholder="Buscar por nome ou especialização..." class="form-control" />
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
+                </form>
 
-            <a href="@Url.Action("Incluir")" class="btn btn-success">Novo Dentista</a>
+                <a href="@Url.Action("Incluir")" class="btn btn-success mb-2">Novo Dentista</a>
+            </div>
         }
-    </div>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
-            <tr>
-                <th>Nome</th>
-                <th>Especialização</th>
-                <th style="width: 30%;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var dentista in Model)
-            {
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>@dentista.Nome</td>
-                    <td>@dentista.Especializacao?.Nome</td>
-                    <td>
-                        <a href="@Url.Action("Exibir", new { id = dentista.Id })" class="btn btn-info btn-sm me-1">Exibir</a>
-
-                        @if (userRole == "Atendente" || userRole == "Administrador" || userRole == "Dentista")
-                        {
-                            <a href="@Url.Action("Alterar", new { id = dentista.Id })" class="btn btn-warning btn-sm me-1">Editar</a>
-                        }
-
-                        @if (userRole == "Atendente")
-                        {
-                            <a href="@Url.Action("Excluir", new { id = dentista.Id })" class="btn btn-danger btn-sm">Excluir</a>
-                        }
-                    </td>
+                    <th>Nome</th>
+                    <th>Especialização</th>
+                    <th class="text-center" style="width: 30%;">Ações</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var dentista in Model)
+                {
+                    <tr>
+                        <td>@dentista.Nome</td>
+                        <td>@dentista.Especializacao?.Nome</td>
+                        <td class="text-center">
+                            <a href="@Url.Action("Exibir", new { id = dentista.Id })" class="btn btn-info btn-sm me-1">Exibir</a>
+
+                            @if (userRole == "Atendente" || userRole == "Administrador" || userRole == "Dentista")
+                            {
+                                <a href="@Url.Action("Alterar", new { id = dentista.Id })" class="btn btn-warning btn-sm me-1">Editar</a>
+                            }
+
+                            @if (userRole == "Atendente")
+                            {
+                                <a href="@Url.Action("Excluir", new { id = dentista.Id })" class="btn btn-danger btn-sm">Excluir</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

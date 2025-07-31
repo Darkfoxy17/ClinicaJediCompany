@@ -2,13 +2,14 @@
 
 @{
     ViewData["Title"] = "Incluir";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="mb-4">Criar Nova Consulta</h1>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-md-6 border rounded p-4 shadow-sm bg-white">
+        <h2 class="text-center mb-4">Criar Nova Consulta</h2>
+        <hr />
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
         <form asp-action="Incluir" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -23,7 +24,6 @@
                 </select>
             </div>
 
-
             <div class="form-group mb-3">
                 <label for="ProcedimentoId" class="form-label fw-bold text-primary">Procedimento</label>
                 <select id="ProcedimentoId" name="ProcedimentoId" class="form-select">
@@ -35,14 +35,12 @@
                 </select>
             </div>
 
-
             <div class="form-group mb-3">
                 <label for="DentistaId" class="form-label fw-bold text-primary">Dentista</label>
                 <select id="DentistaId" name="DentistaId" class="form-select">
                     <option value="">--Selecione um procedimento primeiro--</option>
                 </select>
             </div>
-
 
             <div class="form-group mb-3">
                 <label asp-for="Data" class="form-label fw-bold text-primary"></label>
@@ -56,47 +54,37 @@
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
 
-
-@*             <div class="form-group mb-3">
-                <label asp-for="StatusAgendamento" class="form-label fw-bold text-primary"></label>
-                <textarea asp-for="StatusAgendamento" class="form-control shadow-sm rounded"></textarea>
-                <span asp-validation-for="StatusAgendamento" class="text-danger"></span>
-            </div> *@
-
-            <div class="form-group">
+            <div class="text-center mt-4">
                 <button type="submit" class="btn btn-success me-2">Salvar</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    @{
+    <script>
+        document.getElementById("ProcedimentoId").addEventListener("change", function () {
+            var procedimentoId = this.value;
+            var dentistaSelect = document.getElementById("DentistaId");
+            dentistaSelect.innerHTML = '<option value="">Carregando...</option>';
 
-        <script>
-            document.getElementById("ProcedimentoId").addEventListener("change", function () {
-                var procedimentoId = this.value;
-                var dentistaSelect = document.getElementById("DentistaId");
-                dentistaSelect.innerHTML = '<option value="">Carregando...</option>';
-
-                if (procedimentoId) {
-                    fetch('/Admin/Agendamentos/ObterDentistasPorProcedimento?procedimentoId=' + procedimentoId)
-                        .then(response => response.json())
-                        .then(data => {
-                            dentistaSelect.innerHTML = '<option value="">Selecione</option>';
-                            data.forEach(function (dentista) {
-                                var option = document.createElement("option");
-                                option.value = dentista.id;
-                                option.text = dentista.nome;
-                                dentistaSelect.appendChild(option);
-                            });
+            if (procedimentoId) {
+                fetch('/Admin/Agendamentos/ObterDentistasPorProcedimento?procedimentoId=' + procedimentoId)
+                    .then(response => response.json())
+                    .then(data => {
+                        dentistaSelect.innerHTML = '<option value="">Selecione</option>';
+                        data.forEach(function (dentista) {
+                            var option = document.createElement("option");
+                            option.value = dentista.id;
+                            option.text = dentista.nome;
+                            dentistaSelect.appendChild(option);
                         });
-                } else {
-                    dentistaSelect.innerHTML = '<option value="">Selecione um procedimento primeiro</option>';
-                }
-            });
-        </script>
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+                    });
+            } else {
+                dentistaSelect.innerHTML = '<option value="">Selecione um procedimento primeiro</option>';
+            }
+        });
+    </script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

@@ -1,22 +1,103 @@
-html {
-  font-size: 14px;
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* BODY PADRÃO */
 body {
-  margin-bottom: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+    padding-top: 60px; /* Espaço para o header fixo */
+}
+
+/* HEADER */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2f72c1;
+    color: white;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ÍCONE DE MENU */
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* MENU LATERAL (pode expandir isso depois com JS) */
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 220px;
+    background-color: #ffffff;
+    border-right: 1px solid #ddd;
+    height: 100%;
+    padding: 20px;
+    display: none; /* deixar oculto por padrão */
+}
+
+/* CONTEÚDO CENTRALIZADO */
+.main-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px 15px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* TÍTULO */
+h1 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #2f72c1;
+}
+
+/* FORMULÁRIOS */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="tel"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+/* BOTÕES */
+button,
+input[type="submit"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn-primary {
+    background-color: #2f72c1;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #eee;
+    color: #333;
 }

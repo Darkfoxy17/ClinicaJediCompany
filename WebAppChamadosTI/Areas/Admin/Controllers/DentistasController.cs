@@ -141,6 +141,11 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
+                //foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
+                //{
+                //    Console.WriteLine("Erro de validação: " + erro.ErrorMessage);
+                //}
+
                 // Recarrega especializações para o dropdown
                 model.EspecializacoesDisponiveis = bd.Especializacoes
                     .Select(e => new SelectListItem
@@ -277,16 +282,23 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 }
             }
 
+            // Atualiza os dados básicos
             dentista.Nome = model.Nome;
             dentista.Telefone = model.Telefone;
             dentista.DataNascimento = model.DataNascimento;
             dentista.Endereco = model.Endereco;
             dentista.EspecializacaoId = model.EspecializacaoId;
 
-            dentista.DentistaProcedimentos.Clear();
+            // 🔧 Corrigido: remove os vínculos antigos e salva os novos
+            var procedimentosAtuais = bd.DentistaProcedimentos
+                .Where(dp => dp.DentistaId == dentista.Id)
+                .ToList();
+
+            bd.DentistaProcedimentos.RemoveRange(procedimentosAtuais);
+            model.ProcedimentosIds ??= new List<int>();
             foreach (var procedimentoId in model.ProcedimentosIds)
             {
-                dentista.DentistaProcedimentos.Add(new DentistaProcedimento
+                bd.DentistaProcedimentos.Add(new DentistaProcedimento
                 {
                     DentistaId = dentista.Id,
                     ProcedimentoId = procedimentoId
@@ -296,6 +308,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             bd.SaveChanges();
             return RedirectToAction("Index");
         }
+
 
 
 

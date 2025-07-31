@@ -32,11 +32,12 @@ namespace WebAppChamadosTI.Models
         public string Telefone { get; set; }
 
         [Required(ErrorMessage = "Campo data de nascimento é obrigatório")]
-        [Display(Name = "Data de nascimento")]
+        [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
 
         [Required(ErrorMessage = "Campo endereço é obrigatório")]
         [MaxLength(100, ErrorMessage = "Ultrapassou o máximo permitido")]
+        [Display(Name = "Endereço")]
         public string Endereco { get; set; }
 
         public RegistroViewModel()

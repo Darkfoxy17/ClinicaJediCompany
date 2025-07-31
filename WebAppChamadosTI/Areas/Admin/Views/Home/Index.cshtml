@@ -1,2 +1,17 @@
-﻿
-<h2>Seja Bem-vindo(a)!</h2>
+﻿@{
+    ViewData["Title"] = "Painel Administrativo";
+}
+
+<div class="text-center mt-5">
+    <h2>Seja Bem-vindo(a)!</h2>
+
+    @if (User.IsInRole("Paciente"))
+    {
+        <p class="lead mt-3">Marque sua consulta agora mesmo!</p>
+        <a class="btn btn-success mt-3"
+           href="https://wa.me/5599999999999?text=Olá%2C+gostaria+de+agendar+uma+consulta+na+Clínica+Jedi."
+           target="_blank">
+            <i class="fab fa-whatsapp"></i> Enviar mensagem via WhatsApp
+        </a>
+    }
+</div>

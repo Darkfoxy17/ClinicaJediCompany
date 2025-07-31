@@ -1,43 +1,41 @@
 ﻿@model WebAppChamadosTI.Models.ContaViewModel
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Entrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-
-<div class="row">
-    <div class="col-md-4 coll-md-4 offset-md-4">
-        <h4>Entre com sua conta!</h4>
-        <hr />
-        <form asp-action="Entrar">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="login-box shadow p-4 rounded bg-white">
+                <h4 class="mb-3">Entre com sua conta!</h4>
+                <hr />
+                <form asp-action="Entrar">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Senha" class="form-label"></label>
+                        <input asp-for="Senha" class="form-control" />
+                        <span asp-validation-for="Senha" class="text-danger"></span>
+                    </div>
+                    <div class="form-group text-center mb-3">
+                        <input type="submit" value="Entrar" class="btn btn-primary" />
+                        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary ms-2">Voltar</a>
+                    </div>
+                    <div class="form-group text-center">
+                        <p>Ainda não possui uma conta? <a asp-action="Registrar" asp-route-perfil="Paciente">Registre-se!</a></p>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Senha" class="control-label"></label>
-                <input asp-for="Senha" class="form-control" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-            <div class="form-group p-2 text-center">
-                <input type="submit" value="Entrar" class="btn btn-primary" />
-                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Voltar</a>
-            </div>
-            <div class="form-group">
-                <p>Ainda não possui uma conta? <a asp-action="Registrar" asp-route-perfil="Paciente">Registre-se!</a></p>
-
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

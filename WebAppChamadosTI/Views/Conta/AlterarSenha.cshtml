@@ -2,36 +2,49 @@
 
 @{
     ViewData["Title"] = "Alterar Senha";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Alterar Senha</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-md-6 border rounded p-4 shadow-sm bg-white">
+        <h2 class="text-center mb-4">Alterar Senha</h2>
 
-@if (TempData["Mensagem"] != null)
-{
-    <div class="alert alert-success">@TempData["Senha alterada com sucesso!"]</div>
-}
+        <form asp-action="AlterarSenha" method="post">
+            <div class="form-group mb-3">
+                <label asp-for="SenhaAtual" class="form-label">Senha atual</label>
+                <input asp-for="SenhaAtual" class="form-control" type="password" />
+                <span asp-validation-for="SenhaAtual" class="text-danger"></span>
+            </div>
 
-<form asp-action="AlterarSenha" method="post">
-    <div class="form-group">
-        <label asp-for="SenhaAtual"></label>
-        <input asp-for="SenhaAtual" class="form-control" type="password" />
-        <span asp-validation-for="SenhaAtual" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="NovaSenha" class="form-label">Nova senha</label>
+                <input asp-for="NovaSenha" class="form-control" type="password" />
+                <span asp-validation-for="NovaSenha" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="ConfirmarNovaSenha" class="form-label">Nova senha</label>
+                <input asp-for="ConfirmarNovaSenha" class="form-control" type="password" />
+                <span asp-validation-for="ConfirmarNovaSenha" class="text-danger"></span>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary me-2">Salvar</button>
+
+                @if (User.IsInRole("Dentista"))
+                {
+                    <a asp-area="Admin" asp-controller="Dentistas" asp-action="Index" class="btn btn-secondary">Voltar</a>
+                }
+                else if (User.IsInRole("Paciente"))
+                {
+                    <a asp-area="Admin" asp-controller="Pacientes" asp-action="Index" class="btn btn-secondary">Voltar</a>
+                }
+            </div>
+
+
+        </form>
     </div>
-
-    <div class="form-group">
-        <label asp-for="NovaSenha"></label>
-        <input asp-for="NovaSenha" class="form-control" type="password" />
-        <span asp-validation-for="NovaSenha" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ConfirmarNovaSenha"></label>
-        <input asp-for="ConfirmarNovaSenha" class="form-control" type="password" />
-        <span asp-validation-for="ConfirmarNovaSenha" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Salvar</button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

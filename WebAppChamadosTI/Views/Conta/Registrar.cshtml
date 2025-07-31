@@ -1,55 +1,57 @@
 ﻿@model WebAppChamadosTI.Models.RegistroViewModel
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
-    <div class="offset-md-4 col-md-4 offset-md-4">
-        <h4>Registro de usuário @* (@Model.Perfil.ToString()) *@</h4>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-md-6 border rounded p-4 shadow-sm bg-white">
+        <h4 class="text-center mb-4">Registro de Usuário</h4>
         <hr />
         <form asp-action="Registrar" method="post">
             <fieldset>
                 <legend>Usuário</legend>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="Perfil" /> <!-- Mantém o perfil oculto -->
+                <input type="hidden" asp-for="Perfil" />
 
-                <div class="form-group">
-                    <label asp-for="Nome" class="control-label"></label>
+                <div class="form-group mb-3">
+                    <label asp-for="Nome" class="form-label"></label>
                     <input asp-for="Nome" class="form-control" />
                     <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Senha" class="control-label"></label>
-                    <input asp-for="Senha" type="password" class="form-control" />
-                    <span asp-validation-for="Senha" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Telefone" class="control-label"></label>
-                    <input asp-for="Telefone" class="form-control" />
-                    <span asp-validation-for="Telefone" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="DataNascimento" class="control-label"></label>
+                <div class="form-group mb-3">
+                    <label asp-for="DataNascimento" class="form-label">Data de Nascimento</label>
                     <input asp-for="DataNascimento" class="form-control" type="date" />
                     <span asp-validation-for="DataNascimento" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Endereco" class="control-label"></label>
+                <div class="form-group mb-3">
+                    <label asp-for="Endereco" class="form-label"></label>
                     <input asp-for="Endereco" class="form-control" />
                     <span asp-validation-for="Endereco" class="text-danger"></span>
                 </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Telefone" class="form-label"></label>
+                    <input asp-for="Telefone" class="form-control" />
+                    <span asp-validation-for="Telefone" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Senha" class="form-label"></label>
+                    <input asp-for="Senha" type="password" class="form-control" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+
+
 
             </fieldset>
 

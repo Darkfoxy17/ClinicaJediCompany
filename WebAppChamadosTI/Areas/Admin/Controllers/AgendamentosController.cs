@@ -65,6 +65,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             {
                 agendamento.StatusAgendamentoId = 1; // Define como "Pendente" automaticamente
                 bd.Agendamentos.Add(agendamento);
+                VincularDentistaAoProcedimento(agendamento.DentistaId, agendamento.ProcedimentoId);
                 bd.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -106,6 +107,7 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
                 agendamentoExistente.DentistaId = agendamento.DentistaId;
                 agendamentoExistente.PacienteId = agendamento.PacienteId;
                 agendamentoExistente.Data = agendamento.Data;
+                VincularDentistaAoProcedimento(agendamento.DentistaId, agendamento.ProcedimentoId);
 
                 bd.SaveChanges();
 
@@ -168,17 +170,37 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
         public JsonResult ObterDentistasPorProcedimento(int procedimentoId)
         {
             var dentistas = bd.DentistaProcedimentos
+                .Include(dp => dp.Dentista)
                 .Where(dp => dp.ProcedimentoId == procedimentoId)
                 .Select(dp => new
                 {
-                    dp.Dentista.Id,
-                    dp.Dentista.Nome
+                    Id = dp.Dentista.Id,
+                    Nome = dp.Dentista.Nome
                 })
                 .Distinct()
                 .ToList();
 
             return Json(dentistas);
         }
+
+
+        private void VincularDentistaAoProcedimento(int dentistaId, int procedimentoId)
+        {
+            var jaExiste = bd.DentistaProcedimentos
+                .Any(dp => dp.DentistaId == dentistaId && dp.ProcedimentoId == procedimentoId);
+
+            if (!jaExiste)
+            {
+                bd.DentistaProcedimentos.Add(new DentistaProcedimento
+                {
+                    DentistaId = dentistaId,
+                    ProcedimentoId = procedimentoId
+                });
+
+                bd.SaveChanges();
+            }
+        }
+
 
     }
 }

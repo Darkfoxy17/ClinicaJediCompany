@@ -2,31 +2,37 @@
 
 @{
     ViewData["Title"] = "Visualizar Dentista";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Dados do Dentista</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-md-6 border rounded p-4 shadow-sm bg-white">
+        <h2 class="text-center mb-4">Detalhes do Dentista</h2>
+        <hr />
 
-<dl class="row">
-    <dt class="col-sm-3">Nome:</dt>
-    <dd class="col-sm-9">@Model.Nome</dd>
+        <dl class="row">
+            <dt class="col-sm-4 fw-bold text-primary">Nome</dt>
+            <dd class="col-sm-8">@Model.Nome</dd>
 
-    <dt class="col-sm-3">Especialização:</dt>
-    <dd class="col-sm-9">@Model.Especializacao?.Nome</dd>
+            <dt class="col-sm-4 fw-bold text-primary">Especialização</dt>
+            <dd class="col-sm-8">@Model.Especializacao?.Nome</dd>
 
-    <dt class="col-sm-3">Email:</dt>
-    <dd class="col-sm-9">@Model.Usuario.Email</dd>
+            <dt class="col-sm-4 fw-bold text-primary">Email</dt>
+            <dd class="col-sm-8">@Model.Usuario.Email</dd>
 
-    <dt class="col-sm-3">Telefone:</dt>
-    <dd class="col-sm-9">@Model.Telefone</dd>
+            <dt class="col-sm-4 fw-bold text-primary">Telefone</dt>
+            <dd class="col-sm-8">@Model.Telefone</dd>
 
-    <dt class="col-sm-3">Data de Nascimento:</dt>
-    <dd class="col-sm-9">@Model.DataNascimento.ToShortDateString()</dd>
+            <dt class="col-sm-4 fw-bold text-primary">Data de Nascimento</dt>
+            <dd class="col-sm-8">@Model.DataNascimento.ToShortDateString()</dd>
 
-    <dt class="col-sm-3">Endereço:</dt>
-    <dd class="col-sm-9">@Model.Endereco</dd>
-</dl>
+            <dt class="col-sm-4 fw-bold text-primary">Endereço</dt>
+            <dd class="col-sm-8">@Model.Endereco</dd>
+        </dl>
 
-<div>
-    <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary">Editar</a>
-    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        <div class="text-center mt-4">
+            <a asp-action="Alterar" asp-route-id="@Model?.Id" class="btn btn-primary me-2">Editar</a>
+            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
 </div>

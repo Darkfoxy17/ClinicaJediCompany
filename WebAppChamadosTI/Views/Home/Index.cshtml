@@ -1,9 +1,39 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Início";
 }
 
-<div class="nav-buttons">
-    <a asp-controller="Conta" asp-action="Entrar">Login</a>
-    <a asp-controller="Conta" asp-action="Registrar" asp-route-perfil="Paciente">Registrar</a>
+<div class="homepage-wrapper">
+    <section class="hero">
+        <h1>Bem-vindo à <span>Clínica Jedi</span></h1>
+        <p>Seu sorriso é nossa força. Agende consultas com os melhores dentistas da galáxia.</p>
+        <a class="btn-consulta" href="/Conta/Entrar">Agendar Consulta</a>
+    </section>
+
+    <section class="benefits">
+        <h2>Por que escolher a Clínica Jedi?</h2>
+        <p class="subtitle">Cuidamos da sua saúde bucal com tecnologia e profissionais qualificados.</p>
+
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-user-md fa-2x"></i>
+                <h3>Profissionais experientes</h3>
+                <p>Equipe especializada em diversas áreas da odontologia.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-tooth fa-2x"></i>
+                <h3>Atendimento completo</h3>
+                <p>Clínica equipada com o que há de mais moderno.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-heart fa-2x"></i>
+                <h3>Cuidado humanizado</h3>
+                <p>Tratamos cada paciente com atenção e empatia.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Pronto para transformar seu sorriso?</h2>
+        <a class="btn-consulta" href="/Conta/Entrar">Agende agora</a>
+    </section>
 </div>
