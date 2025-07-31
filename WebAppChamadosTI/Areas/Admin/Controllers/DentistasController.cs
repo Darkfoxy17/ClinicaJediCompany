@@ -289,21 +289,24 @@ namespace WebAppChamadosTI.Areas.Admin.Controllers
             dentista.Endereco = model.Endereco;
             dentista.EspecializacaoId = model.EspecializacaoId;
 
-            // 🔧 Corrigido: remove os vínculos antigos e salva os novos
-            var procedimentosAtuais = bd.DentistaProcedimentos
-                .Where(dp => dp.DentistaId == dentista.Id)
-                .ToList();
-
-            bd.DentistaProcedimentos.RemoveRange(procedimentosAtuais);
-            model.ProcedimentosIds ??= new List<int>();
-            foreach (var procedimentoId in model.ProcedimentosIds)
+            if (model.ProcedimentosIds != null && model.ProcedimentosIds.Any())
             {
-                bd.DentistaProcedimentos.Add(new DentistaProcedimento
+                var procedimentosAtuais = bd.DentistaProcedimentos
+                    .Where(dp => dp.DentistaId == dentista.Id)
+                    .ToList();
+
+                bd.DentistaProcedimentos.RemoveRange(procedimentosAtuais);
+
+                foreach (var procedimentoId in model.ProcedimentosIds)
                 {
-                    DentistaId = dentista.Id,
-                    ProcedimentoId = procedimentoId
-                });
+                    bd.DentistaProcedimentos.Add(new DentistaProcedimento
+                    {
+                        DentistaId = dentista.Id,
+                        ProcedimentoId = procedimentoId
+                    });
+                }
             }
+
 
             bd.SaveChanges();
             return RedirectToAction("Index");
